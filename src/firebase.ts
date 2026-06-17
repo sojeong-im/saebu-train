@@ -20,7 +20,7 @@ export const getSavedFirebaseConfig = (): FirebaseConfigData | null => {
     }
   }
 
-  // Also check vite env as secondary option
+  // Check vite env as secondary option
   if (import.meta.env.VITE_FIREBASE_API_KEY && import.meta.env.VITE_FIREBASE_DATABASE_URL) {
     return {
       apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -33,7 +33,16 @@ export const getSavedFirebaseConfig = (): FirebaseConfigData | null => {
     };
   }
 
-  return null;
+  // Hardcoded default fallback for zero-configuration setup
+  return {
+    apiKey: "AIzaSyDURqd0QPMlPf-_QmxcQ93d34ehxbOlhxk",
+    authDomain: "saebu-train.firebaseapp.com",
+    databaseURL: "https://saebu-train-default-rtdb.firebaseio.com",
+    projectId: "saebu-train",
+    storageBucket: "saebu-train.firebasestorage.app",
+    messagingSenderId: "815753764028",
+    appId: "1:815753764028:web:b22f27b210b004773484b9"
+  };
 };
 
 export const saveFirebaseConfig = (config: FirebaseConfigData) => {
