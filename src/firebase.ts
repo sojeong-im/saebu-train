@@ -37,7 +37,7 @@ export const getSavedFirebaseConfig = (): FirebaseConfigData | null => {
   return {
     apiKey: "AIzaSyDURqd0QPMlPf-_QmxcQ93d34ehxbOlhxk",
     authDomain: "saebu-train.firebaseapp.com",
-    databaseURL: "https://saebu-train-default-rtdb.firebaseio.com",
+    databaseURL: "https://saebu-train-default-rtdb.asia-southeast1.firebasedatabase.app",
     projectId: "saebu-train",
     storageBucket: "saebu-train.firebasestorage.app",
     messagingSenderId: "815753764028",
