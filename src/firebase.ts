@@ -122,11 +122,17 @@ export const submitScore = async (
       const submissionsRef = ref(db, "submissions");
       const newRef = push(submissionsRef);
       
-      // We will write with Firebase Server Timestamp to ensure server time enforcement
-      await set(newRef, {
+      // Wrap the database set in a 6-second timeout to prevent infinite pending (e.g. wrong Database URL)
+      const writePromise = set(newRef, {
         ...newSubmission,
         submittedAt: serverTimestamp(),
       });
+
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error("서버 연결 시간 초과 (데이터베이스 URL 주소가 실제와 일치하는지 확인해 주세요)")), 6000)
+      );
+
+      await Promise.race([writePromise, timeoutPromise]);
       return { success: true };
     } catch (e: any) {
       console.error("Firebase submission failed", e);
