@@ -1,0 +1,313 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;600;800&family=Share+Tech+Mono&display=swap');
+
+:root {
+  --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: 'Share Tech Mono', monospace;
+  --font-display: 'Orbitron', sans-serif;
+
+  /* Theme colors - Dark Industrial */
+  --bg-main: #020617; /* bg-slate-950 */
+  --bg-card: #0b1329;
+  --bg-card-light: #1c2541;
+  --border-color: #1e293b;
+  --border-glow: #3b82f6;
+
+  /* Team Accent Colors & Shadows */
+  --team1-color: #ef4444; /* Red */
+  --team1-glow: 0 0 15px rgba(239, 68, 68, 0.6);
+  --team2-color: #3b82f6; /* Blue */
+  --team2-glow: 0 0 15px rgba(59, 130, 246, 0.6);
+  --team3-color: #eab308; /* Yellow */
+  --team3-glow: 0 0 15px rgba(234, 179, 8, 0.6);
+  --team4-color: #10b981; /* Emerald */
+  --team4-glow: 0 0 15px rgba(16, 185, 129, 0.6);
+  --team5-color: #a855f7; /* Purple */
+  --team5-glow: 0 0 15px rgba(168, 85, 247, 0.6);
+
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-main);
+  color: #f1f5f9;
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+  /* Grid pattern in background to resemble blueprint/industrial blueprints */
+  background-image: 
+    linear-gradient(rgba(30, 41, 59, 0.2) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30, 41, 59, 0.2) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-main);
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* Animations */
+@keyframes neon-flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+    text-shadow: 0 0 4px #fff, 0 0 10px #3b82f6, 0 0 20px #3b82f6, 0 0 40px #2563eb;
+    opacity: 1;
+  }
+  20%, 24%, 55% {
+    text-shadow: none;
+    opacity: 0.7;
+  }
+}
+
+@keyframes led-scroll {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+@keyframes smoke-puff {
+  0% {
+    transform: translate(0, 0) scale(0.6);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translate(-15px, -8px) scale(1.2);
+    opacity: 0.4;
+  }
+  100% {
+    transform: translate(-30px, -15px) scale(1.8);
+    opacity: 0;
+  }
+}
+
+@keyframes vibration {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+/* Common Classes */
+.digital-font {
+  font-family: var(--font-mono);
+}
+
+.display-font {
+  font-family: var(--font-display);
+}
+
+/* Industrial Cyberspace Card */
+.cyber-card {
+  background: linear-gradient(135deg, #0b1329 0%, #080f20 100%);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+}
+
+.cyber-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--border-glow), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.5s ease;
+}
+
+.cyber-card:hover::before {
+  transform: translateX(100%);
+}
+
+.cyber-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  border-radius: 4px;
+  letter-spacing: 1px;
+}
+
+/* Locomotive Tracks & Racing Rails UI */
+.railroad-track {
+  position: relative;
+  height: 90px;
+  width: 100%;
+  background: #0f172a;
+  border-bottom: 2px solid #1e293b;
+  display: flex;
+  align-items: center;
+  overflow: visible; /* Allow train glow to overflow */
+}
+
+/* The actual steel rail lines */
+.rail-steel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.rail-steel::before,
+.rail-steel::after {
+  content: '';
+  height: 3px;
+  background: linear-gradient(90deg, #475569, #94a3b8, #475569);
+  width: 100%;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+/* Railroad ties (wooden sleep structures) */
+.rail-ties {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 28px,
+    #1e293b 28px,
+    #1e293b 34px
+  );
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+/* Neon Glow Trains */
+.train-wrapper {
+  position: absolute;
+  bottom: 15px; /* Alignment on track */
+  height: 60px;
+  width: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  /* Super smooth acceleration & movement */
+  transition: left 1.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  will-change: left;
+  z-index: 10;
+  cursor: pointer;
+}
+
+.train-locomotive {
+  width: 60px;
+  height: 44px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px 16px 4px 8px;
+  font-size: 28px;
+  animation: vibration 0.25s infinite linear;
+  box-shadow: var(--team-glow);
+}
+
+/* Custom speed particle smoke */
+.smoke-emitter {
+  position: absolute;
+  left: -12px;
+  top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.smoke-particle {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  animation: smoke-puff 0.8s infinite ease-out;
+}
+
+.smoke-particle:nth-child(2) {
+  animation-delay: 0.25s;
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.smoke-particle:nth-child(3) {
+  animation-delay: 0.5s;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Glowing Neon Borders */
+.border-neon-1 { border-color: var(--team1-color); box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
+.border-neon-2 { border-color: var(--team2-color); box-shadow: 0 0 10px rgba(59, 130, 246, 0.2); }
+.border-neon-3 { border-color: var(--team3-color); box-shadow: 0 0 10px rgba(234, 179, 8, 0.2); }
+.border-neon-4 { border-color: var(--team4-color); box-shadow: 0 0 10px rgba(16, 185, 129, 0.2); }
+.border-neon-5 { border-color: var(--team5-color); box-shadow: 0 0 10px rgba(168, 85, 247, 0.2); }
+
+.bg-neon-1 { background-color: var(--team1-color); box-shadow: var(--team1-glow); }
+.bg-neon-2 { background-color: var(--team2-color); box-shadow: var(--team2-glow); }
+.bg-neon-3 { background-color: var(--team3-color); box-shadow: var(--team3-glow); }
+.bg-neon-4 { background-color: var(--team4-color); box-shadow: var(--team4-glow); }
+.bg-neon-5 { background-color: var(--team5-color); box-shadow: var(--team5-glow); }
+
+.glow-text-1 { text-shadow: 0 0 8px var(--team1-color); }
+.glow-text-2 { text-shadow: 0 0 8px var(--team2-color); }
+.glow-text-3 { text-shadow: 0 0 8px var(--team3-color); }
+.glow-text-4 { text-shadow: 0 0 8px var(--team4-color); }
+.glow-text-5 { text-shadow: 0 0 8px var(--team5-color); }
+
+/* CRT / Cyber Electrics screen overlay effect */
+.crt-screen {
+  position: relative;
+  overflow: hidden;
+}
+
+.crt-screen::after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  z-index: 99;
+  background-size: 100% 3px, 6px 100%;
+  pointer-events: none;
+}
+
+.crt-scanline {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 10px;
+  background: rgba(59, 130, 246, 0.05);
+  animation: scanline 6s infinite linear;
+  pointer-events: none;
+  z-index: 100;
+}

@@ -1,0 +1,17 @@
+{
+  "rules": {
+    ".read": true,
+    "submissions": {
+      "$submission_id": {
+        // Write is only allowed if the current server time is before 2026-06-20 20:00:00 KST (1781982000000 ms)
+        // AND the submitted timestamp matches the server time
+        ".write": "now < 1781982000000 && (!data.exists() || !newData.exists())",
+        ".validate": "newData.hasChildren(['teamId', 'teamName', 'missionId', 'missionName', 'points', 'count', 'totalPoints', 'submittedAt']) && newData.child('submittedAt').val() == now"
+      }
+    },
+    "settings": {
+      // Settings (e.g. Target Score) can be written by anyone, but also locked after the deadline
+      ".write": "now < 1781982000000"
+    }
+  }
+}
