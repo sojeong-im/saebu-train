@@ -8,6 +8,7 @@ import { getSavedFirebaseConfig, saveFirebaseConfig, clearFirebaseConfig } from 
 import { DEADLINE_TIMESTAMP } from "../types";
 import type { FirebaseConfigData } from "../types";
 import { RenderTeamTrain } from "./TrainSVGs";
+import { VictoryPopup } from "./VictoryPopup";
 
 interface ToastNotification {
   id: string;
@@ -20,6 +21,7 @@ export const Dashboard: React.FC = () => {
   const {
     submissions,
     teamScores,
+    sortedTeams,
     leaderTeam,
     targetScore,
     isFirebaseConnected,
@@ -43,6 +45,8 @@ export const Dashboard: React.FC = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [timeRemaining, setTimeRemaining] = useState("");
   const [isEnded, setIsEnded] = useState(false);
+  const [isVictoryOpen, setIsVictoryOpen] = useState(false);
+  const hasTriggeredVictory = useRef(false);
 
   // Audio settings (Mute/Unmute)
   const [isMuted, setIsMuted] = useState(false);
@@ -77,6 +81,10 @@ export const Dashboard: React.FC = () => {
       if (diff <= 0) {
         setTimeRemaining("경기 종료!");
         setIsEnded(true);
+        if (!hasTriggeredVictory.current) {
+          hasTriggeredVictory.current = true;
+          setIsVictoryOpen(true);
+        }
       } else {
         const hours = Math.floor(diff / (1000 * 60 * 60));
         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
@@ -417,7 +425,7 @@ export const Dashboard: React.FC = () => {
               // Bound train left position (calc 100% - train size 85px)
               const boundPercent = Math.min(100, Math.max(0, percentage));
               
-              const isMoving = team.score > 0;
+              const isMoving = team.score > 0 && !isEnded;
               const isAccelerating = acceleratingTeams[team.teamId] || false;
 
               return (
@@ -869,6 +877,9 @@ export const Dashboard: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Victory Celebration Popup */}
+      <VictoryPopup isOpen={isVictoryOpen} sortedTeams={sortedTeams} onClose={() => setIsVictoryOpen(false)} />
     </div>
   );
 };

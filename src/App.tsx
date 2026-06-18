@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Dashboard } from './components/Dashboard';
 import { InputForm } from './components/InputForm';
+import { Intro } from './components/Intro';
 
 function App() {
   const [mode, setMode] = useState<'dashboard' | 'input'>('dashboard');
+  const [showIntro, setShowIntro] = useState<boolean>(true);
 
   useEffect(() => {
     // Function to parse the query string and set the active view
@@ -12,8 +14,10 @@ function App() {
       const urlMode = params.get('mode');
       if (urlMode === 'input') {
         setMode('input');
+        setShowIntro(false); // No intro for mobile input form
       } else {
         setMode('dashboard');
+        // Keep intro on dashboard load
       }
     };
 
@@ -30,7 +34,13 @@ function App() {
 
   return (
     <main style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {mode === 'input' ? <InputForm /> : <Dashboard />}
+      {showIntro && mode === 'dashboard' ? (
+        <Intro onStart={() => setShowIntro(false)} />
+      ) : mode === 'input' ? (
+        <InputForm />
+      ) : (
+        <Dashboard />
+      )}
     </main>
   );
 }
