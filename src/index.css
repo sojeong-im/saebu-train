@@ -378,20 +378,6 @@ body {
     font-size: 0.75rem !important;
   }
 
-  /* Intro Characters mobile repositioning to prevent overlap with title */
-  div[style*="left: \"12vw\""] {
-    left: 3vw !important;
-    top: 12vh !important;
-    transform: scale(0.75) !important;
-    transform-origin: top left !important;
-  }
-  div[style*="left: \"72vw\""] {
-    left: 65vw !important;
-    top: 12vh !important;
-    transform: scale(0.75) !important;
-    transform-origin: top right !important;
-  }
-
   /* Dashboard Stats Board */
   header > div:last-child {
     gap: 6px !important;

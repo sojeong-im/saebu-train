@@ -79,14 +79,14 @@ export const Intro: React.FC<IntroProps> = ({ onStart }) => {
     }, 1500);
   };
 
-  // Sparkle stars array for background effect
-  const stars = Array.from({ length: 22 }).map((_, i) => ({
+  // Sparkle magical stars array for rich background particle atmosphere
+  const stars = Array.from({ length: 35 }).map((_, i) => ({
     id: i,
     x: Math.random() * 100,
     y: Math.random() * 100,
-    scale: Math.random() * 0.8 + 0.4,
-    duration: Math.random() * 2 + 1.5,
-    delay: Math.random() * 1.5
+    scale: Math.random() * 0.9 + 0.4,
+    duration: Math.random() * 3 + 2,
+    delay: Math.random() * 3
   }));
 
   return (
@@ -145,9 +145,9 @@ export const Intro: React.FC<IntroProps> = ({ onStart }) => {
             key={star.id}
             initial={{ opacity: 0, scale: 0 }}
             animate={{ 
-              opacity: [0, 0.85, 0],
-              scale: [star.scale * 0.5, star.scale, star.scale * 0.5],
-              y: [0, -15, 0]
+              opacity: [0, 0.9, 0],
+              scale: [star.scale * 0.4, star.scale, star.scale * 0.4],
+              y: [0, -35, 0]
             }}
             transition={{
               duration: star.duration,
@@ -159,109 +159,20 @@ export const Intro: React.FC<IntroProps> = ({ onStart }) => {
               position: "absolute",
               left: `${star.x}%`,
               top: `${star.y}%`,
-              width: "10px",
-              height: "10px",
-              background: "#fef08a",
+              width: "12px",
+              height: "12px",
+              background: star.id % 2 === 0 ? "#fef08a" : "#fed7aa", /* Alternating Gold & Soft Orange */
               clipPath: "polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)",
-              boxShadow: "0 0 10px #fef08a"
+              boxShadow: "0 0 10px rgba(254, 240, 138, 0.8)"
             }}
           />
         ))}
       </div>
 
-      {/* INTRO HERO CHARACTER POPUPS (왼쪽 곰, 오른쪽 고양이 바운스 엔트리) */}
-      <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 4 }}>
-        {/* Left Bear Character Representation */}
-        <motion.div
-          initial={{ x: "-150px", y: "30vh", opacity: 0 }}
-          animate={{ x: "12vw", y: "25vh", opacity: 1 }}
-          transition={{ type: "spring", stiffness: 60, damping: 10, delay: 0.8 }}
-          style={{
-            position: "absolute",
-            width: "140px",
-            height: "140px",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center"
-          }}
-        >
-          {/* Circular cartoon container resembling our bear mascot */}
-          <div style={{
-            width: "100px",
-            height: "100px",
-            background: "#ffffff",
-            border: "5px solid #1e293b",
-            borderRadius: "50%",
-            position: "relative",
-            boxShadow: "0 8px 0 rgba(0,0,0,0.2), inset -2px -2px 6px rgba(0,0,0,0.1)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: "3.5rem"
-          }}>
-            🐻
-            {/* Blue Headband */}
-            <div style={{
-              position: "absolute",
-              top: "12px",
-              left: "10px",
-              right: "10px",
-              height: "12px",
-              background: "#3b82f6",
-              border: "2.5px solid #1e293b",
-              borderRadius: "4px"
-            }} />
-          </div>
-          <div className="game-card" style={{ padding: "3px 10px", background: "#3b82f6", color: "white", fontSize: "0.85rem", fontWeight: "900", marginTop: "8px", border: "3px solid #1e293b", fontFamily: "var(--font-game)" }}>
-            SEABUGI 🚂
-          </div>
-        </motion.div>
-
-        {/* Right Cat Character Representation */}
-        <motion.div
-          initial={{ x: "100vw", y: "30vh", opacity: 0 }}
-          animate={{ x: "72vw", y: "23vh", opacity: 1 }}
-          transition={{ type: "spring", stiffness: 60, damping: 10, delay: 1 }}
-          style={{
-            position: "absolute",
-            width: "140px",
-            height: "140px",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center"
-          }}
-        >
-          {/* Circular cartoon container resembling our cat mascot */}
-          <div style={{
-            width: "100px",
-            height: "100px",
-            background: "#ffffff",
-            border: "5px solid #1e293b",
-            borderRadius: "50%",
-            position: "relative",
-            boxShadow: "0 8px 0 rgba(0,0,0,0.2), inset -2px -2px 6px rgba(0,0,0,0.1)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: "3.5rem"
-          }}>
-            🐱
-            {/* Whiskers */}
-            <div style={{ position: "absolute", left: "-6px", top: "45px", width: "12px", height: "3px", background: "#1e293b", borderRadius: "2px", transform: "rotate(10deg)" }} />
-            <div style={{ position: "absolute", left: "-6px", top: "53px", width: "12px", height: "3px", background: "#1e293b", borderRadius: "2px" }} />
-            <div style={{ position: "absolute", right: "-6px", top: "45px", width: "12px", height: "3px", background: "#1e293b", borderRadius: "2px", transform: "rotate(-10deg)" }} />
-            <div style={{ position: "absolute", right: "-6px", top: "53px", width: "12px", height: "3px", background: "#1e293b", borderRadius: "2px" }} />
-          </div>
-          <div className="game-card" style={{ padding: "3px 10px", background: "#ef4444", color: "white", fontSize: "0.85rem", fontWeight: "900", marginTop: "8px", border: "3px solid #1e293b", fontFamily: "var(--font-game)" }}>
-            SAEPO 🚂
-          </div>
-        </motion.div>
-      </div>
-
       {/* CORE LOGO & BANNER GROUP */}
       <div style={{
         position: "absolute",
-        top: "44vh",
+        top: "38vh", /* Adjusted to center nicely without characters */
         left: "50%",
         transform: "translateX(-50%)",
         width: "90%",
