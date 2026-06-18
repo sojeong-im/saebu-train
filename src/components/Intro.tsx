@@ -276,7 +276,7 @@ export const Intro: React.FC<IntroProps> = ({ onStart }) => {
           initial={{ scale: 0.2, y: 100, opacity: 0 }}
           animate={{ scale: 1, y: 0, opacity: 1 }}
           transition={{ type: "spring", stiffness: 70, damping: 12, delay: 0.3 }}
-          style={{ position: "relative" }}
+          style={{ position: "relative", zIndex: 10 }}
         >
           {/* Glow shining styled text */}
           <h1 className="game-title-text" style={{
@@ -284,13 +284,15 @@ export const Intro: React.FC<IntroProps> = ({ onStart }) => {
             fontWeight: "900",
             textAlign: "center",
             margin: 0,
-            lineHeight: "1.05",
-            background: "linear-gradient(135deg, #fbbf24 0%, #fef08a 25%, #fbbf24 50%, #fef08a 75%, #f59e0b 100%)",
-            backgroundSize: "200% auto",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            animation: "shine 4s linear infinite",
-            filter: "drop-shadow(0 4px 6px rgba(0,0,0,0.5))"
+            lineHeight: "1.1",
+            color: "#fef08a", /* Very bright glowing yellow text */
+            textShadow: `
+              -4px -4px 0 #1e293b,  
+               4px -4px 0 #1e293b,
+              -4px  4px 0 #1e293b,
+               4px  4px 0 #1e293b,
+               0px  10px 0 rgba(30, 41, 59, 0.4)
+            `
           }}>
             찾기 익스프레스
           </h1>

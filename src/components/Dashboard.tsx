@@ -418,122 +418,115 @@ export const Dashboard: React.FC = () => {
           </div>
 
           {/* Tracks Area */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "4px", flex: 1, justifyContent: "space-around" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "6px", flex: 1, justifyContent: "space-around" }}>
             {teamScores.map((team) => {
-              // Percentage calculation
               const percentage = targetScore > 0 ? (team.score / targetScore) * 100 : 0;
-              // Bound train left position (calc 100% - train size 85px)
               const boundPercent = Math.min(100, Math.max(0, percentage));
               
               const isMoving = team.score > 0 && !isEnded;
               const isAccelerating = acceleratingTeams[team.teamId] || false;
 
               return (
-                <div key={team.teamId} className="racing-track-row">
-                  {/* Left Rail signs */}
+                <div key={team.teamId} className="racing-track-row" style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  paddingLeft: "10px",
+                  paddingRight: "10px"
+                }}>
+                  {/* 1. Left Section (Static badge width) */}
                   <div style={{ 
-                    position: "absolute", 
-                    left: "10px", 
+                    width: "125px", 
+                    flexShrink: 0,
                     zIndex: 20, 
                     display: "flex", 
                     alignItems: "center", 
-                    gap: "8px" 
+                    gap: "6px" 
                   }}>
-                    {/* Rail label */}
                     <div 
                       className="rail-number-sign" 
                       style={{ 
-                        width: "55px", 
-                        height: "36px", 
+                        width: "52px", 
+                        height: "34px", 
                         background: getTeamBadgeColor(team.teamId),
-                        fontSize: "0.85rem"
+                        fontSize: "0.8rem",
+                        flexShrink: 0
                       }}
                     >
                       {team.teamId}레일
                     </div>
-                    {/* Team label */}
                     <div 
                       className="team-badge-sign"
                       style={{ 
                         padding: "4px 8px", 
                         background: getTeamBadgeColor(team.teamId),
-                        fontSize: "0.8rem"
+                        fontSize: "0.8rem",
+                        flexShrink: 0,
+                        whiteSpace: "nowrap"
                       }}
                     >
-                      {team.teamId}팀 ({team.score}점)
+                      {team.teamId}팀
                     </div>
                   </div>
 
-                  {/* 2D Wood/Steel Railroad tracks */}
-                  <div className="railroad-ties-2d"></div>
-                  <div className="railroad-steel-2d"></div>
+                  {/* 2. Middle Section (Flexible running track space for train) */}
+                  <div style={{ 
+                    flex: 1, 
+                    height: "100%", 
+                    position: "relative", 
+                    margin: "0 15px",
+                    overflow: "visible"
+                  }}>
+                    {/* 2D Wood/Steel Railroad tracks */}
+                    <div className="railroad-ties-2d"></div>
+                    <div className="railroad-steel-2d"></div>
 
-                  {/* Moving train element */}
-                  <div 
-                    className="game-train-wrapper"
-                    style={{ 
-                      // 145px represents offset from left (signs 130px) + right boundary buffer
-                      left: `calc(135px + (${boundPercent}% * 0.77))` 
-                    }}
-                  >
-                    {/* Speed lines when accelerating */}
-                    <div className={`speed-booster-lines ${isAccelerating ? "active" : ""}`}>
-                      <div className="speed-line-element" style={{ background: getTeamBadgeColor(team.teamId), animationDelay: "0s" }} />
-                      <div className="speed-line-element" style={{ background: getTeamBadgeColor(team.teamId), animationDelay: "0.15s" }} />
-                      <div className="speed-line-element" style={{ background: getTeamBadgeColor(team.teamId), animationDelay: "0.3s" }} />
-                    </div>
-
-                    {/* Smoke Emitter Chimney cloud puffs */}
-                    {isMoving && (
-                      <div style={{ position: "absolute", right: "12px", top: "-15px" }}>
-                        <div className="smoke-cloud-2d" style={{ animationDelay: "0s" }} />
-                        <div className="smoke-cloud-2d" style={{ animationDelay: "0.35s", left: "-6px" }} />
-                        <div className="smoke-cloud-2d" style={{ animationDelay: "0.7s", left: "4px" }} />
+                    {/* Moving train element inside localized parent */}
+                    <div 
+                      className="game-train-wrapper"
+                      style={{ 
+                        left: `calc(${boundPercent}% - ${boundPercent > 0 ? (85 * (boundPercent / 100)) : 0}px)`
+                      }}
+                    >
+                      {/* Speed lines */}
+                      <div className={`speed-booster-lines ${isAccelerating ? "active" : ""}`}>
+                        <div className="speed-line-element" style={{ background: getTeamBadgeColor(team.teamId) }} />
+                        <div className="speed-line-element" style={{ background: getTeamBadgeColor(team.teamId) }} />
+                        <div className="speed-line-element" style={{ background: getTeamBadgeColor(team.teamId) }} />
                       </div>
-                    )}
 
-                    {/* SVG Customized Train */}
-                    <RenderTeamTrain teamId={team.teamId} isMoving={isMoving} />
+                      {/* Smoke puffs */}
+                      {isMoving && (
+                        <div style={{ position: "absolute", right: "12px", top: "-15px" }}>
+                          <div className="smoke-cloud-2d" style={{ animationDelay: "0s" }} />
+                          <div className="smoke-cloud-2d" style={{ animationDelay: "0.35s", left: "-6px" }} />
+                          <div className="smoke-cloud-2d" style={{ animationDelay: "0.7s", left: "4px" }} />
+                        </div>
+                      )}
+
+                      {/* SVG Train */}
+                      <RenderTeamTrain teamId={team.teamId} isMoving={isMoving} />
+                    </div>
+                  </div>
+
+                  {/* 3. Right Section (Checkered Finish Line) */}
+                  <div style={{ 
+                    width: "44px", 
+                    height: "100%", 
+                    flexShrink: 0,
+                    display: "flex", 
+                    justifyContent: "center",
+                    position: "relative",
+                    zIndex: 15
+                  }}>
+                    <div className="finish-line-checker" style={{ height: "100%" }}></div>
                   </div>
                 </div>
               );
             })}
           </div>
 
-          {/* Right Finish Line Checker & Sign */}
-          <div style={{ 
-            position: "absolute", 
-            right: "80px", 
-            top: "70px", 
-            bottom: "60px",
-            zIndex: 15,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center"
-          }}>
-            {/* Finish Line Top sign (결승선) */}
-            <div style={{
-              background: "#ef4444",
-              border: "3px solid #1e293b",
-              borderRadius: "8px",
-              padding: "4px 14px",
-              color: "white",
-              fontWeight: "900",
-              fontFamily: "var(--font-game)",
-              boxShadow: "0 4px 0 #1e293b",
-              fontSize: "0.9rem",
-              zIndex: 30,
-              transform: "translateY(-6px)",
-              letterSpacing: "1px"
-            }}>
-              결승선
-            </div>
-
-            {/* Checkered bar */}
-            <div className="finish-line-checker" style={{ flex: 1 }}></div>
-          </div>
-
-          {/* Scale tags */}
+          {/* Combined Header Label & Scale tags */}
           <div style={{ 
             display: "flex", 
             justifyContent: "space-between", 

@@ -366,16 +366,30 @@ body {
     gap: 8px;
   }
   .game-title-text {
-    font-size: 1.6rem !important;
+    font-size: 2.3rem !important;
     text-shadow: 
       -2px -2px 0 #1e293b,  
        2px -2px 0 #1e293b,
       -2px  2px 0 #1e293b,
        2px  2px 0 #1e293b,
-       0px  4px 0 rgba(0, 0, 0, 0.3);
+       0px  5px 0 rgba(0, 0, 0, 0.3) !important;
   }
   header p {
     font-size: 0.75rem !important;
+  }
+
+  /* Intro Characters mobile repositioning to prevent overlap with title */
+  div[style*="left: \"12vw\""] {
+    left: 3vw !important;
+    top: 12vh !important;
+    transform: scale(0.75) !important;
+    transform-origin: top left !important;
+  }
+  div[style*="left: \"72vw\""] {
+    left: 65vw !important;
+    top: 12vh !important;
+    transform: scale(0.75) !important;
+    transform-origin: top right !important;
   }
 
   /* Dashboard Stats Board */
