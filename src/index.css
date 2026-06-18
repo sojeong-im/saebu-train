@@ -20,6 +20,9 @@
   --team3-color: #22c55e; /* Green diesel Train */
   --team4-color: #a855f7; /* Purple futuristic Train */
   --team5-color: #f59e0b; /* Yellow mini Train */
+
+  /* Train positioning offset */
+  --train-offset: 85px;
 }
 
 * {
@@ -169,6 +172,61 @@ body {
   align-items: center;
   position: relative;
   overflow: visible;
+}
+
+/* 3-Part Track layout base components */
+.track-left-badge-area {
+  width: 125px;
+  flex-shrink: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.track-middle-rail-area {
+  flex: 1;
+  height: 100%;
+  position: relative;
+  margin: 0 15px;
+  overflow: visible;
+}
+.track-right-finish-area {
+  width: 44px;
+  height: 100%;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  z-index: 15;
+}
+.track-scale-labels {
+  display: flex;
+  justify-content: space-between;
+  border-top: 3px solid #1e293b;
+  padding-top: 12px;
+  font-size: 0.85rem;
+  color: #475569;
+  font-weight: 800;
+  font-family: var(--font-game);
+  padding-left: 135px;
+  padding-right: 80px;
+}
+
+/* Dashboard Header & Notice base styles */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 2rem;
+}
+.dashboard-notice-wrapper {
+  padding: 0 2rem;
+}
+.dashboard-notice-card {
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 /* 2D wood slab ties railroad track */
@@ -345,6 +403,10 @@ body {
    MOBILE & TABLET RESPONSIVE STYLES
    ========================================================================== */
 @media (max-width: 768px) {
+  :root {
+    --train-offset: 42px;
+  }
+
   body {
     background: linear-gradient(to bottom, var(--bg-sky-top) 0%, var(--bg-sky-bottom) 30%, #bbf7d0 30%, #86efac 100%);
   }
@@ -361,12 +423,16 @@ body {
 
   /* Header adjustments */
   header {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
     padding: 0.8rem 1rem !important;
     margin-bottom: 0.5rem !important;
-    gap: 8px;
+    gap: 12px !important;
   }
   .game-title-text {
-    font-size: 2.3rem !important;
+    font-size: 2.0rem !important;
+    white-space: nowrap !important;
     text-shadow: 
       -2px -2px 0 #1e293b,  
        2px -2px 0 #1e293b,
@@ -375,12 +441,14 @@ body {
        0px  5px 0 rgba(0, 0, 0, 0.3) !important;
   }
   header p {
-    font-size: 0.75rem !important;
+    font-size: 0.85rem !important;
   }
 
   /* Dashboard Stats Board */
-  header > div:last-child {
-    gap: 6px !important;
+  .dashboard-header-right {
+    width: 100% !important;
+    justify-content: center !important;
+    gap: 8px !important;
   }
   .game-card {
     padding: 6px 10px !important;
@@ -388,42 +456,44 @@ body {
     border-radius: 10px !important;
   }
   .game-card span {
-    font-size: 0.9rem !important;
+    font-size: 0.85rem !important;
   }
   .game-card span.digital-font {
-    font-size: 1.1rem !important;
+    font-size: 1.05rem !important;
   }
-  .game-card div:nth-child(2) {
+  .game-card div.dashboard-timer-divider {
     height: 14px !important;
     width: 2px !important;
   }
 
   /* Leaderboard notice banner */
-  div[style*="padding: 0 2rem"] {
+  .dashboard-notice-wrapper {
     padding: 0 0.75rem !important;
   }
-  div[style*="padding: 0 2rem"] > .game-card {
-    padding: 8px 12px !important;
+  .dashboard-notice-card {
+    padding: 10px 14px !important;
     flex-direction: column !important;
-    gap: 8px !important;
-    align-items: stretch !important;
+    gap: 10px !important;
+    align-items: center !important;
     text-align: center !important;
   }
-  div[style*="padding: 0 2rem"] h2 {
-    font-size: 0.85rem !important;
+  .dashboard-notice-card h2 {
+    font-size: 0.9rem !important;
     justify-content: center !important;
     flex-wrap: wrap !important;
+    line-height: 1.4 !important;
   }
-  div[style*="padding: 0 2rem"] a {
+  .dashboard-notice-card a {
     width: 100% !important;
     text-align: center !important;
+    box-sizing: border-box !important;
   }
 
   /* Main track container */
-  div[style*="padding: 0 2rem 2rem 2rem"] {
+  .dashboard-main-grid {
     padding: 0 0.75rem 1rem 0.75rem !important;
   }
-  div[style*="padding: 0 2rem 2rem 2rem"] > section {
+  .dashboard-main-grid > section {
     padding: 1rem 0.75rem 0.75rem 0.75rem !important;
     border-width: 3px !important;
     border-radius: 12px !important;
@@ -432,6 +502,8 @@ body {
   /* Tracks height & scaling */
   .racing-track-row {
     height: 64px !important;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
   }
   .railroad-ties-2d {
     bottom: 8px !important;
@@ -441,11 +513,28 @@ body {
     bottom: 14px !important;
   }
 
+  /* 3-Part Track responsive layouts */
+  .track-left-badge-area {
+    width: 52px !important;
+    gap: 0px !important;
+  }
+  .track-middle-rail-area {
+    margin: 0 8px !important;
+  }
+  .track-right-finish-area {
+    width: 28px !important;
+  }
+
+  /* Mobile Hide helper */
+  .mobile-hide {
+    display: none !important;
+  }
+
   /* Rail signs scaling */
   .rail-number-sign {
-    width: 38px !important;
-    height: 26px !important;
-    font-size: 0.7rem !important;
+    width: 48px !important;
+    height: 30px !important;
+    font-size: 0.75rem !important;
     border-width: 2px !important;
     border-radius: 8px !important;
     box-shadow: 0 2px 0 #1e293b !important;
@@ -459,36 +548,24 @@ body {
   }
 
   /* Checkered Finish Line Positioning */
-  div[style*="right: 80px"] {
-    right: 25px !important;
-    top: 55px !important;
-    bottom: 45px !important;
-  }
-  div[style*="right: 80px"] > div:first-child {
-    font-size: 0.7rem !important;
-    padding: 2px 8px !important;
-    border-width: 2px !important;
-    border-radius: 6px !important;
-    box-shadow: 0 2px 0 #1e293b !important;
-  }
   .finish-line-checker {
-    width: 28px !important;
-    background-size: 14px 14px !important;
-    background-position: 0 0, 7px 7px !important;
+    width: 24px !important;
+    background-size: 12px 12px !important;
+    background-position: 0 0, 6px 6px !important;
   }
 
-  /* Train resizing for mobile (scale down SVG) */
+  /* Train resizing for mobile (scale down SVG to fit tight space) */
   .game-train-wrapper {
-    bottom: 3px !important;
-    height: 40px !important;
-    transform: scale(0.68) !important;
+    bottom: 5px !important;
+    height: 36px !important;
+    transform: scale(0.48) !important;
     transform-origin: bottom right !important;
   }
 
   /* Track Bottom scale texts */
-  div[style*="border-top: 3px solid #1e293b"] {
-    padding-left: 95px !important;
-    padding-right: 25px !important;
+  .track-scale-labels {
+    padding-left: 62px !important;
+    padding-right: 38px !important;
     font-size: 0.7rem !important;
     border-top-width: 2px !important;
     padding-top: 8px !important;

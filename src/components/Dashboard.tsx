@@ -249,11 +249,7 @@ export const Dashboard: React.FC = () => {
       </div>
 
       {/* HEADER BAR */}
-      <header style={{ 
-        display: "flex", 
-        justifyContent: "space-between", 
-        alignItems: "center", 
-        padding: "1.2rem 2rem", 
+      <header className="dashboard-header" style={{ 
         zIndex: 10,
         position: "relative"
       }}>
@@ -268,7 +264,7 @@ export const Dashboard: React.FC = () => {
         </div>
 
         {/* Dashboard Status LED & Timer */}
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }} className="dashboard-header-right">
           
           {/* Mute button */}
           <button 
@@ -283,39 +279,41 @@ export const Dashboard: React.FC = () => {
               background: "white",
               border: "3px solid #1e293b",
               borderRadius: "10px",
-              width: "40px",
-              height: "40px",
+              width: "38px",
+              height: "38px",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               cursor: "pointer",
-              boxShadow: "0 3px 0 #1e293b"
+              boxShadow: "0 3px 0 #1e293b",
+              flexShrink: 0
             }}
           >
-            {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+            {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
           </button>
 
           {/* Clock Board */}
-          <div className="game-card" style={{ 
-            padding: "8px 20px", 
+          <div className="game-card dashboard-timer-board" style={{ 
+            padding: "6px 16px", 
             display: "flex", 
             alignItems: "center", 
-            gap: "16px",
-            background: "#ffffff"
+            gap: "12px",
+            background: "#ffffff",
+            flexShrink: 0
           }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-              <Clock size={16} className="text-slate-500" />
-              <span className="digital-font" style={{ fontSize: "1rem", color: "#475569", fontWeight: "bold" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+              <Clock size={14} className="text-slate-500" />
+              <span className="digital-font dashboard-clock-text" style={{ fontSize: "0.95rem", color: "#475569", fontWeight: "bold", whiteSpace: "nowrap" }}>
                 {currentTime.toLocaleTimeString("ko-KR", { hour12: false })}
               </span>
             </div>
             
-            <div style={{ height: "18px", width: "3px", backgroundColor: "#1e293b", borderRadius: "2px" }} />
+            <div className="dashboard-timer-divider" style={{ height: "16px", width: "2px", backgroundColor: "#1e293b", borderRadius: "2px" }} />
             
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <span style={{ fontSize: "0.8rem", color: "#1e293b", fontWeight: "800", fontFamily: "var(--font-game)" }}>마감까지</span>
-              <span className="digital-font" style={{ 
-                fontSize: "1.4rem", 
+            <div style={{ display: "flex", alignItems: "center", gap: "6px", whiteSpace: "nowrap" }}>
+              <span className="dashboard-timer-label" style={{ fontSize: "0.75rem", color: "#1e293b", fontWeight: "800", fontFamily: "var(--font-game)" }}>마감까지</span>
+              <span className="digital-font dashboard-timer-countdown" style={{ 
+                fontSize: "1.3rem", 
                 fontWeight: "bold",
                 color: isEnded ? "#ef4444" : "#ea580c"
               }}>
@@ -330,28 +328,25 @@ export const Dashboard: React.FC = () => {
               background: "white",
               border: "3px solid #1e293b",
               borderRadius: "10px",
-              width: "40px",
-              height: "40px",
+              width: "38px",
+              height: "38px",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               cursor: "pointer",
-              boxShadow: "0 3px 0 #1e293b"
+              boxShadow: "0 3px 0 #1e293b",
+              flexShrink: 0
             }}
           >
-            <Settings size={20} />
+            <Settings size={18} />
           </button>
         </div>
       </header>
 
       {/* LEADER BOARD NOTICE BAR */}
-      <div style={{ padding: "0 2rem", marginBottom: "1rem", zIndex: 10 }}>
-        <div className="game-card" style={{ 
-          padding: "10px 20px",
-          background: "linear-gradient(to right, #ffffff 0%, #f8fafc 100%)",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center"
+      <div className="dashboard-notice-wrapper" style={{ marginBottom: "1rem", zIndex: 10 }}>
+        <div className="game-card dashboard-notice-card" style={{ 
+          background: "linear-gradient(to right, #ffffff 0%, #f8fafc 100%)"
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <Trophy size={24} style={{ color: leaderTeam ? "#f59e0b" : "#94a3b8" }} />
@@ -435,14 +430,7 @@ export const Dashboard: React.FC = () => {
                   paddingRight: "10px"
                 }}>
                   {/* 1. Left Section (Static badge width) */}
-                  <div style={{ 
-                    width: "125px", 
-                    flexShrink: 0,
-                    zIndex: 20, 
-                    display: "flex", 
-                    alignItems: "center", 
-                    gap: "6px" 
-                  }}>
+                  <div className="track-left-badge-area">
                     <div 
                       className="rail-number-sign" 
                       style={{ 
@@ -456,7 +444,7 @@ export const Dashboard: React.FC = () => {
                       {team.teamId}레일
                     </div>
                     <div 
-                      className="team-badge-sign"
+                      className="team-badge-sign mobile-hide"
                       style={{ 
                         padding: "4px 8px", 
                         background: getTeamBadgeColor(team.teamId),
@@ -470,13 +458,7 @@ export const Dashboard: React.FC = () => {
                   </div>
 
                   {/* 2. Middle Section (Flexible running track space for train) */}
-                  <div style={{ 
-                    flex: 1, 
-                    height: "100%", 
-                    position: "relative", 
-                    margin: "0 15px",
-                    overflow: "visible"
-                  }}>
+                  <div className="track-middle-rail-area">
                     {/* 2D Wood/Steel Railroad tracks */}
                     <div className="railroad-ties-2d"></div>
                     <div className="railroad-steel-2d"></div>
@@ -485,7 +467,7 @@ export const Dashboard: React.FC = () => {
                     <div 
                       className="game-train-wrapper"
                       style={{ 
-                        left: `calc(${boundPercent}% - ${boundPercent > 0 ? (85 * (boundPercent / 100)) : 0}px)`
+                        left: `calc(${boundPercent}% - ${boundPercent > 0 ? `(var(--train-offset) * ${boundPercent / 100})` : '0px'})`
                       }}
                     >
                       {/* Speed lines */}
@@ -510,15 +492,7 @@ export const Dashboard: React.FC = () => {
                   </div>
 
                   {/* 3. Right Section (Checkered Finish Line) */}
-                  <div style={{ 
-                    width: "44px", 
-                    height: "100%", 
-                    flexShrink: 0,
-                    display: "flex", 
-                    justifyContent: "center",
-                    position: "relative",
-                    zIndex: 15
-                  }}>
+                  <div className="track-right-finish-area">
                     <div className="finish-line-checker" style={{ height: "100%" }}></div>
                   </div>
                 </div>
@@ -527,18 +501,7 @@ export const Dashboard: React.FC = () => {
           </div>
 
           {/* Combined Header Label & Scale tags */}
-          <div style={{ 
-            display: "flex", 
-            justifyContent: "space-between", 
-            borderTop: "3px solid #1e293b", 
-            paddingTop: "12px",
-            fontSize: "0.85rem",
-            color: "#475569",
-            fontWeight: "800",
-            fontFamily: "var(--font-game)",
-            paddingLeft: "135px",
-            paddingRight: "80px"
-          }}>
+          <div className="track-scale-labels">
             <span>출발역 (0%)</span>
             <span>중간 지점 (50%)</span>
             <span style={{ color: "#ef4444" }}>피니시 터미널 (100%) 🏁</span>
