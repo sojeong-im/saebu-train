@@ -57,7 +57,7 @@ export const AdminPanel: React.FC = () => {
   // Auth Handler
   const handleAuth = (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === "saebu2026") {
+    if (password === "0314") {
       setIsAuthenticated(true);
       setPassword("");
     } else {
