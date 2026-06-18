@@ -407,9 +407,6 @@ export const Dashboard: React.FC = () => {
             <span className="cyber-badge" style={{ background: "#f1f5f9", color: "#475569", border: "2px solid #1e293b", fontWeight: "bold" }}>
               2D RACING TRACKS
             </span>
-            <span className="digital-font" style={{ fontSize: "0.85rem", color: "#64748b", fontWeight: "bold" }}>
-              목표 완주선: <strong style={{ color: "#3b82f6" }}>{targetScore}점</strong>
-            </span>
           </div>
 
           {/* Tracks Area */}
