@@ -1,15 +1,32 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { 
   ChevronDown, ChevronUp, Plus, Minus, 
-  Send, AlertTriangle, ArrowLeft, RefreshCw, Smartphone
+  Send, AlertTriangle, ArrowLeft, RefreshCw, Smartphone, Lock, X
 } from "lucide-react";
 import { submitScore, isFirebaseActive } from "../firebase";
 import { MISSION_CATEGORIES, TEAMS, DEADLINE_TIMESTAMP } from "../types";
 
+// 팀별 비밀번호
+const TEAM_PASSWORDS: Record<number, string> = {
+  1: "0314",
+  2: "0315",
+  3: "0316",
+  4: "0317",
+  5: "0318",
+};
+
 export const InputForm: React.FC = () => {
-  const [selectedTeamId, setSelectedTeamId] = useState<number>(1);
+  const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
+  const [unlockedTeamId, setUnlockedTeamId] = useState<number | null>(null);
   const [expandedCategory, setExpandedCategory] = useState<string>("basic_missions");
   
+  // Password modal state
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [passwordInput, setPasswordInput] = useState("");
+  const [passwordError, setPasswordError] = useState(false);
+  const [shakeError, setShakeError] = useState(false);
+  const passwordInputRef = useRef<HTMLInputElement>(null);
+
   // Track counts of each mission
   const [missionCounts, setMissionCounts] = useState<{ [key: string]: number }>({});
   
@@ -44,6 +61,36 @@ export const InputForm: React.FC = () => {
     return () => clearInterval(timer);
   }, []);
 
+  // Password gate helpers
+  const openPasswordModal = (teamId: number) => {
+    setSelectedTeamId(teamId);
+    setPasswordInput("");
+    setPasswordError(false);
+    setShakeError(false);
+    setShowPasswordModal(true);
+    // Focus after render
+    setTimeout(() => passwordInputRef.current?.focus(), 80);
+  };
+
+  const confirmPassword = () => {
+    if (passwordInput === TEAM_PASSWORDS[selectedTeamId!]) {
+      setUnlockedTeamId(selectedTeamId);
+      setMissionCounts({});
+      setPasswordError(false);
+      setShowPasswordModal(false);
+    } else {
+      setPasswordError(true);
+      setShakeError(true);
+      setPasswordInput("");
+      setTimeout(() => setShakeError(false), 500);
+    }
+  };
+
+  const handlePasswordKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") confirmPassword();
+    if (e.key === "Escape") setShowPasswordModal(false);
+  };
+
   const incrementCount = (missionId: string) => {
     if (isEnded) return;
     setMissionCounts(prev => ({
@@ -59,6 +106,9 @@ export const InputForm: React.FC = () => {
       [missionId]: Math.max(0, (prev[missionId] || 0) - 1)
     }));
   };
+
+  // activeTeamId: 실제로 미션이 활성화된 팀
+  const activeTeamId = unlockedTeamId ?? 1;
 
   const calculateTotalPoints = () => {
     let sum = 0;
@@ -91,7 +141,7 @@ export const InputForm: React.FC = () => {
       return;
     }
 
-    const team = TEAMS.find(t => t.teamId === selectedTeamId);
+    const team = TEAMS.find(t => t.teamId === activeTeamId);
     if (!team) return;
 
     if (!window.confirm(`[${team.teamName}]에 총 +${totalPoints}점을 제출하겠습니까?`)) {
@@ -106,7 +156,7 @@ export const InputForm: React.FC = () => {
           const count = missionCounts[item.id] || 0;
           if (count > 0) {
             const res = await submitScore(
-              selectedTeamId,
+              activeTeamId,
               team.teamName,
               item.id,
               item.name,
@@ -133,7 +183,7 @@ export const InputForm: React.FC = () => {
     }
   };
 
-  const getTeamColor = (teamId: number) => {
+  const getTeamColor = (teamId: number | null) => {
     switch (teamId) {
       case 1: return "var(--team1-color)";
       case 2: return "var(--team2-color)";
@@ -154,6 +204,134 @@ export const InputForm: React.FC = () => {
       flexDirection: "column",
       background: "#f0f9ff" /* Light sky blue background */
     }}>
+
+      {/* PASSWORD MODAL */}
+      {showPasswordModal && (
+        <div style={{
+          position: "fixed",
+          inset: 0,
+          background: "rgba(15,23,42,0.72)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 9999,
+          backdropFilter: "blur(4px)"
+        }}>
+          <div
+            style={{
+              background: "#ffffff",
+              border: "4px solid #1e293b",
+              borderRadius: "20px",
+              boxShadow: "0 8px 0 #1e293b",
+              padding: "32px 28px 24px",
+              width: "min(340px, 90vw)",
+              display: "flex",
+              flexDirection: "column",
+              gap: "20px",
+              animation: shakeError ? "shake 0.4s ease" : undefined,
+            }}
+          >
+            {/* Modal header */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <div style={{
+                  width: "40px", height: "40px",
+                  background: getTeamColor(selectedTeamId),
+                  borderRadius: "10px",
+                  border: "3px solid #1e293b",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: "1.3rem"
+                }}>🔒</div>
+                <div>
+                  <div style={{ fontFamily: "var(--font-game)", fontWeight: "900", fontSize: "1rem", color: "#1e293b" }}>
+                    {selectedTeamId}팀 비밀번호
+                  </div>
+                  <div style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: "600" }}>4자리 숫자를 입력하세요</div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowPasswordModal(false)}
+                style={{
+                  background: "#f1f5f9",
+                  border: "2px solid #1e293b",
+                  borderRadius: "8px",
+                  width: "32px", height: "32px",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  cursor: "pointer"
+                }}
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* PIN input */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <input
+                ref={passwordInputRef}
+                type="password"
+                inputMode="numeric"
+                maxLength={4}
+                value={passwordInput}
+                onChange={e => {
+                  setPasswordError(false);
+                  setPasswordInput(e.target.value.replace(/\D/g, "").slice(0, 4));
+                }}
+                onKeyDown={handlePasswordKeyDown}
+                placeholder="••••"
+                style={{
+                  textAlign: "center",
+                  fontSize: "2rem",
+                  letterSpacing: "0.5em",
+                  padding: "14px",
+                  border: passwordError ? "3px solid #ef4444" : "3px solid #1e293b",
+                  borderRadius: "12px",
+                  outline: "none",
+                  fontFamily: "var(--font-game)",
+                  color: passwordError ? "#ef4444" : "#1e293b",
+                  background: passwordError ? "#fef2f2" : "#f8fafc",
+                  boxShadow: passwordError ? "0 3px 0 #ef4444" : "0 3px 0 #1e293b",
+                  transition: "all 0.15s"
+                }}
+              />
+              {passwordError && (
+                <div style={{
+                  display: "flex", alignItems: "center", gap: "6px",
+                  color: "#ef4444", fontSize: "0.82rem", fontWeight: "800",
+                  fontFamily: "var(--font-game)"
+                }}>
+                  <AlertTriangle size={14} /> 비밀번호가 틀렸어요!
+                </div>
+              )}
+            </div>
+
+            {/* Confirm button */}
+            <button
+              type="button"
+              onClick={confirmPassword}
+              disabled={passwordInput.length < 4}
+              style={{
+                width: "100%",
+                padding: "14px",
+                background: passwordInput.length === 4 ? getTeamColor(selectedTeamId) : "#e2e8f0",
+                color: passwordInput.length === 4 ? "#ffffff" : "#94a3b8",
+                border: "3px solid #1e293b",
+                borderRadius: "12px",
+                fontWeight: "900",
+                fontSize: "1rem",
+                fontFamily: "var(--font-game)",
+                cursor: passwordInput.length === 4 ? "pointer" : "default",
+                boxShadow: passwordInput.length === 4 ? "0 4px 0 #1e293b" : "none",
+                transform: passwordInput.length === 4 ? "none" : "translateY(4px)",
+                transition: "all 0.1s",
+                display: "flex", alignItems: "center", justifyContent: "center", gap: "8px"
+              }}
+            >
+              <Lock size={16} /> 잠금 해제
+            </button>
+          </div>
+        </div>
+      )}
       
       {/* HEADER NAVIGATION */}
       <header style={{ 
@@ -220,25 +398,25 @@ export const InputForm: React.FC = () => {
         {/* TEAM SELECTION 3D CHIPS */}
         <section style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
           <span style={{ color: "#1e293b", fontFamily: "var(--font-game)", fontWeight: "900", fontSize: "0.9rem", alignSelf: "flex-start" }}>
-            1단계: 완수 팀을 고르세요!
+            1단계: 우리 팀을 선택하고 비밀번호를 입력하세요!
           </span>
           
           <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "8px" }}>
             {TEAMS.map((t) => {
-              const isSelected = selectedTeamId === t.teamId;
+              const isUnlocked = unlockedTeamId === t.teamId;
               const activeColor = getTeamColor(t.teamId);
               
               return (
                 <button
                   key={t.teamId}
                   type="button"
-                  onClick={() => setSelectedTeamId(t.teamId)}
+                  onClick={() => openPasswordModal(t.teamId)}
                   disabled={isEnded}
                   style={{
                     padding: "12px 4px 8px 4px",
-                    background: isSelected ? activeColor : "#ffffff",
-                    border: "3px solid #1e293b",
-                    color: isSelected ? "#ffffff" : "#1e293b",
+                    background: isUnlocked ? activeColor : "#ffffff",
+                    border: `3px solid ${isUnlocked ? activeColor : "#1e293b"}`,
+                    color: isUnlocked ? "#ffffff" : "#1e293b",
                     borderRadius: "12px",
                     fontSize: "0.85rem",
                     fontWeight: "900",
@@ -249,22 +427,62 @@ export const InputForm: React.FC = () => {
                     flexDirection: "column",
                     alignItems: "center",
                     gap: "4px",
-                    // Tactile 3D button click translation
-                    transform: isSelected ? "translateY(3px)" : "translateY(0)",
-                    boxShadow: isSelected ? "0 1px 0 #1e293b" : "0 4px 0 #1e293b",
-                    opacity: isEnded ? 0.5 : 1
+                    transform: isUnlocked ? "translateY(3px)" : "translateY(0)",
+                    boxShadow: isUnlocked ? `0 1px 0 ${activeColor}` : "0 4px 0 #1e293b",
+                    opacity: isEnded ? 0.5 : 1,
+                    position: "relative"
                   }}
                 >
-                  <span style={{ fontSize: "1.4rem" }}>🚂</span>
+                  <span style={{ fontSize: "1.4rem" }}>{isUnlocked ? "🚂" : "🔒"}</span>
                   <span>{t.teamId}팀</span>
+                  {isUnlocked && (
+                    <span style={{
+                      position: "absolute",
+                      top: "-6px", right: "-6px",
+                      background: "#22c55e",
+                      border: "2px solid #1e293b",
+                      borderRadius: "50%",
+                      width: "16px", height: "16px",
+                      fontSize: "0.55rem",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      color: "#fff", fontWeight: "900"
+                    }}>✓</span>
+                  )}
                 </button>
               );
             })}
           </div>
+
+          {/* Unlock status hint */}
+          {unlockedTeamId === null ? (
+            <div style={{
+              display: "flex", alignItems: "center", gap: "6px",
+              padding: "8px 12px",
+              background: "#fef9c3",
+              border: "2px solid #fbbf24",
+              borderRadius: "10px",
+              fontSize: "0.8rem", fontWeight: "800", color: "#92400e",
+              fontFamily: "var(--font-game)"
+            }}>
+              <Lock size={13} /> 팀을 선택하면 비밀번호 입력창이 열려요
+            </div>
+          ) : (
+            <div style={{
+              display: "flex", alignItems: "center", gap: "6px",
+              padding: "8px 12px",
+              background: "#dcfce7",
+              border: `2px solid ${getTeamColor(unlockedTeamId)}`,
+              borderRadius: "10px",
+              fontSize: "0.8rem", fontWeight: "800", color: "#166534",
+              fontFamily: "var(--font-game)"
+            }}>
+              ✅ {unlockedTeamId}팀 인증 완료! 미션을 입력해 주세요.
+            </div>
+          )}
         </section>
 
-        {/* ACCORDION CATEGORIES */}
-        <section style={{ display: "flex", flexDirection: "column", gap: "8px", flex: 1 }}>
+        {/* ACCORDION CATEGORIES – only shown after unlock */}
+        <section style={{ display: "flex", flexDirection: "column", gap: "8px", flex: 1, opacity: unlockedTeamId === null ? 0.35 : 1, pointerEvents: unlockedTeamId === null ? "none" : "auto", transition: "opacity 0.3s" }}>
           <span style={{ color: "#1e293b", fontFamily: "var(--font-game)", fontWeight: "900", fontSize: "0.9rem", alignSelf: "flex-start" }}>
             2단계: 미션 횟수를 설정해 주세요!
           </span>
@@ -272,7 +490,7 @@ export const InputForm: React.FC = () => {
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             {MISSION_CATEGORIES.map((category) => {
               const isOpen = expandedCategory === category.key;
-              const activeColor = getTeamColor(selectedTeamId);
+              const activeColor = getTeamColor(activeTeamId);
               const categoryCountSum = category.items.reduce((sum, item) => sum + (missionCounts[item.id] || 0), 0);
 
               return (
@@ -426,19 +644,19 @@ export const InputForm: React.FC = () => {
           padding: "16px",
           background: "#ffffff",
           borderWidth: "4px",
-          borderColor: getTeamColor(selectedTeamId),
+          borderColor: getTeamColor(activeTeamId),
           borderRadius: "16px",
           display: "flex",
           flexDirection: "column",
           gap: "12px",
           marginTop: "auto",
-          boxShadow: `0 6px 0 ${getTeamColor(selectedTeamId)}`
+          boxShadow: `0 6px 0 ${getTeamColor(activeTeamId)}`
         }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div>
               <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: "bold" }}>대상 팀:</span>
-              <strong style={{ display: "block", fontSize: "0.95rem", color: getTeamColor(selectedTeamId), fontFamily: "var(--font-game)", fontWeight: "900" }}>
-                {TEAMS.find(t => t.teamId === selectedTeamId)?.teamName}
+              <strong style={{ display: "block", fontSize: "0.95rem", color: getTeamColor(activeTeamId), fontFamily: "var(--font-game)", fontWeight: "900" }}>
+                {unlockedTeamId !== null ? TEAMS.find(t => t.teamId === activeTeamId)?.teamName : "팀 미선택"}
               </strong>
             </div>
             <div style={{ textAlign: "right" }}>
@@ -456,27 +674,27 @@ export const InputForm: React.FC = () => {
 
           <button
             type="submit"
-            disabled={isEnded || isSubmitting || calculateTotalPoints() === 0}
+            disabled={isEnded || isSubmitting || calculateTotalPoints() === 0 || unlockedTeamId === null}
             style={{
               width: "100%",
               padding: "14px",
-              background: isEnded ? "#e2e8f0" : getTeamColor(selectedTeamId),
-              color: isEnded ? "#94a3b8" : "#ffffff",
+              background: isEnded || unlockedTeamId === null ? "#e2e8f0" : getTeamColor(activeTeamId),
+              color: isEnded || unlockedTeamId === null ? "#94a3b8" : "#ffffff",
               border: "3px solid #1e293b",
               borderRadius: "12px",
               fontWeight: "900",
               fontSize: "1rem",
               fontFamily: "var(--font-game)",
-              cursor: isEnded || isSubmitting || calculateTotalPoints() === 0 ? "default" : "pointer",
+              cursor: isEnded || isSubmitting || calculateTotalPoints() === 0 || unlockedTeamId === null ? "default" : "pointer",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               gap: "8px",
               // Large 3D button effect
-              boxShadow: !isEnded && calculateTotalPoints() > 0 ? "0 4px 0 #1e293b" : "none",
-              transform: !isEnded && calculateTotalPoints() > 0 ? "none" : "translateY(4px)",
+              boxShadow: !isEnded && calculateTotalPoints() > 0 && unlockedTeamId !== null ? "0 4px 0 #1e293b" : "none",
+              transform: !isEnded && calculateTotalPoints() > 0 && unlockedTeamId !== null ? "none" : "translateY(4px)",
               transition: "all 0.1s",
-              opacity: isEnded || calculateTotalPoints() === 0 ? 0.6 : 1
+              opacity: isEnded || calculateTotalPoints() === 0 || unlockedTeamId === null ? 0.6 : 1
             }}
           >
             {isSubmitting ? (
