@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { ref, onValue, set, remove, Database } from "firebase/database";
-import { getActiveDb, isFirebaseActive } from "../firebase";
+import { getActiveDb, isFirebaseActive, resetSubmissions } from "../firebase";
 import { TEAMS, DEADLINE_TIMESTAMP } from "../types";
 import type { ScoreSubmission, TeamScore } from "../types";
 
@@ -97,6 +97,8 @@ export const useTrainState = () => {
             loadLocalData();
           } else if (event.data && event.data.type === "DELETE_SUBMISSION") {
             loadLocalData();
+          } else if (event.data && event.data.type === "RESET_SUBMISSIONS") {
+            setSubmissions([]);
           } else if (event.data && event.data.type === "UPDATE_TARGET_SCORE") {
             setTargetScore(Number(event.data.data));
             localStorage.setItem("saebu_train_target_score", String(event.data.data));
@@ -214,6 +216,17 @@ export const useTrainState = () => {
     [isFirebaseConnected, dbInstance]
   );
 
+  // Reset all submissions
+  const resetAllSubmissions = useCallback(async () => {
+    const res = await resetSubmissions();
+    if (!res.success) {
+      throw new Error(res.error || "초기화에 실패했습니다.");
+    }
+    if (!isFirebaseConnected) {
+      setSubmissions([]);
+    }
+  }, [isFirebaseConnected]);
+
   return {
     submissions,
     teamScores,
@@ -223,6 +236,7 @@ export const useTrainState = () => {
     isFirebaseConnected,
     updateTargetScore,
     deleteSubmission,
+    resetAllSubmissions,
     checkFirebase,
   };
 };

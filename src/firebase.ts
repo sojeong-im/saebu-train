@@ -157,3 +157,35 @@ export const submitScore = async (
     return { success: true };
   }
 };
+
+// Reset all submissions (Clear DB or LocalStorage)
+export const resetSubmissions = async (): Promise<{ success: boolean; error?: string }> => {
+  const db = getActiveDb();
+  if (db) {
+    try {
+      const submissionsRef = ref(db, "submissions");
+      // 6-second timeout to prevent pending in case of connection drop
+      const writePromise = set(submissionsRef, null);
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error("서버 연결 시간 초과")), 6000)
+      );
+      await Promise.race([writePromise, timeoutPromise]);
+      return { success: true };
+    } catch (e: any) {
+      console.error("Firebase reset failed", e);
+      return { success: false, error: e.message || "Firebase reset failed" };
+    }
+  } else {
+    // Local Mode Reset
+    localStorage.removeItem("saebu_train_local_submissions");
+    try {
+      const channel = new BroadcastChannel("saebu_train_channel");
+      channel.postMessage({ type: "RESET_SUBMISSIONS" });
+      channel.close();
+    } catch (e) {
+      console.error("Broadcast reset failed", e);
+    }
+    return { success: true };
+  }
+};
+

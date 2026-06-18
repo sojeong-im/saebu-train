@@ -1,12 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useTrainState } from "../hooks/useTrainState";
 import { 
-  Settings, Clock, Trophy, Trash2, Database, 
-  AlertTriangle, X, Shield, Volume2, VolumeX
+  Settings, Clock, Trophy, Volume2, VolumeX
 } from "lucide-react";
-import { getSavedFirebaseConfig, saveFirebaseConfig, clearFirebaseConfig } from "../firebase";
 import { DEADLINE_TIMESTAMP } from "../types";
-import type { FirebaseConfigData } from "../types";
 import { RenderTeamTrain } from "./TrainSVGs";
 import { VictoryPopup } from "./VictoryPopup";
 
@@ -23,23 +20,10 @@ export const Dashboard: React.FC = () => {
     teamScores,
     sortedTeams,
     leaderTeam,
-    targetScore,
-    isFirebaseConnected,
-    updateTargetScore,
-    deleteSubmission,
-    checkFirebase
+    targetScore
   } = useTrainState();
 
-  // Admin Panel states
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [adminPassword, setAdminPassword] = useState("");
-  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
-  const [targetScoreInput, setTargetScoreInput] = useState(String(targetScore));
-  
-  // Firebase configs inputs
-  const [fbApiKey, setFbApiKey] = useState("");
-  const [fbDbUrl, setFbDbUrl] = useState("");
-  const [fbProjectId, setFbProjectId] = useState("");
+
 
   // Clock & countdown states
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -60,16 +44,7 @@ export const Dashboard: React.FC = () => {
   const [acceleratingTeams, setAcceleratingTeams] = useState<{ [key: number]: boolean }>({});
   const lastSubmissionsCount = useRef(0);
 
-  // Parse configurations
-  useEffect(() => {
-    const saved = getSavedFirebaseConfig();
-    if (saved) {
-      setFbApiKey(saved.apiKey || "");
-      setFbDbUrl(saved.databaseURL || "");
-      setFbProjectId(saved.projectId || "");
-    }
-    setTargetScoreInput(String(targetScore));
-  }, [targetScore]);
+
 
   // System time and countdown tick
   useEffect(() => {
@@ -161,58 +136,6 @@ export const Dashboard: React.FC = () => {
     }
   }, [submissions, isMuted]);
 
-  // Handle Admin Pass auth
-  const handleAdminAuth = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (adminPassword === "saebu2026") {
-      setIsAdminAuthenticated(true);
-      setAdminPassword("");
-    } else {
-      alert("비밀번호가 올바르지 않습니다.");
-    }
-  };
-
-  // Save config
-  const handleSaveFirebaseConfig = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!fbApiKey || !fbDbUrl) {
-      alert("API Key와 Database URL은 필수입니다.");
-      return;
-    }
-    const config: FirebaseConfigData = {
-      apiKey: fbApiKey,
-      databaseURL: fbDbUrl,
-      projectId: fbProjectId,
-      authDomain: "",
-      storageBucket: "",
-      messagingSenderId: "",
-      appId: ""
-    };
-    saveFirebaseConfig(config);
-    checkFirebase();
-    alert("Firebase 설정이 저장되었습니다. 실시간 연동을 시도합니다.");
-  };
-
-  const handleClearFirebaseConfig = () => {
-    if (window.confirm("Firebase 설정을 삭제하고 로컬 모드로 전환하겠습니까?")) {
-      clearFirebaseConfig();
-      setFbApiKey("");
-      setFbDbUrl("");
-      setFbProjectId("");
-      checkFirebase();
-    }
-  };
-
-  const handleSaveTargetScore = (e: React.FormEvent) => {
-    e.preventDefault();
-    const score = Number(targetScoreInput);
-    if (isNaN(score) || score <= 0) {
-      alert("올바른 숫자를 기입해 주세요.");
-      return;
-    }
-    updateTargetScore(score);
-    alert(`목표 점수가 ${score}점으로 변경되었습니다.`);
-  };
 
   // Team colors mapper for badges
   const getTeamBadgeColor = (teamId: number) => {
@@ -322,8 +245,8 @@ export const Dashboard: React.FC = () => {
             </div>
           </div>
 
-          <button 
-            onClick={() => setIsSettingsOpen(true)}
+          <a 
+            href="?mode=admin"
             style={{
               background: "white",
               border: "3px solid #1e293b",
@@ -338,8 +261,8 @@ export const Dashboard: React.FC = () => {
               flexShrink: 0
             }}
           >
-            <Settings size={18} />
-          </button>
+            <Settings size={18} style={{ color: "#1e293b" }} />
+          </a>
         </div>
       </header>
 
@@ -547,286 +470,6 @@ export const Dashboard: React.FC = () => {
                 </span>
               </div>
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* ADMIN SETTINGS DRAWERS */}
-      {isSettingsOpen && (
-        <div style={{ 
-          position: "fixed", 
-          top: 0, 
-          left: 0, 
-          right: 0, 
-          bottom: 0, 
-          backgroundColor: "rgba(30, 41, 59, 0.6)", 
-          backdropFilter: "blur(2px)", 
-          zIndex: 1000,
-          display: "flex",
-          justifyContent: "flex-end"
-        }}>
-          <div style={{ 
-            width: "100%", 
-            maxWidth: "480px", 
-            height: "100%", 
-            background: "white", 
-            borderLeft: "4px solid #1e293b",
-            padding: "2rem",
-            display: "flex",
-            flexDirection: "column",
-            boxShadow: "-10px 0 30px rgba(0,0,0,0.15)",
-            overflowY: "auto"
-          }}>
-            {/* Header */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem", borderBottom: "3px solid #1e293b", paddingBottom: "10px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <Settings size={22} className="text-slate-700" />
-                <h3 className="display-font" style={{ margin: 0, fontSize: "1.2rem", fontWeight: "900", color: "#1e293b", fontFamily: "var(--font-game)" }}>ADMIN SETTINGS</h3>
-              </div>
-              <button 
-                onClick={() => {
-                  setIsSettingsOpen(false);
-                  setIsAdminAuthenticated(false);
-                }}
-                style={{ background: "none", border: "none", color: "#64748b", cursor: "pointer" }}
-              >
-                <X size={24} />
-              </button>
-            </div>
-
-            {/* IF NOT AUTHENTICATED */}
-            {!isAdminAuthenticated ? (
-              <form onSubmit={handleAdminAuth} style={{ display: "flex", flexDirection: "column", gap: "1rem", marginTop: "1rem" }}>
-                <div style={{ textAlign: "center", color: "#64748b", fontSize: "0.9rem", marginBottom: "1rem" }}>
-                  <Shield size={48} style={{ margin: "0 auto 12px", display: "block", color: "#64748b" }} />
-                  <p>관리자 비밀번호를 통해 데이터를 제어할 수 있습니다.</p>
-                </div>
-                <div>
-                  <label style={{ display: "block", fontSize: "0.85rem", color: "#475569", marginBottom: "6px", fontWeight: "bold" }}>관리자 비밀번호</label>
-                  <input 
-                    type="password" 
-                    value={adminPassword}
-                    onChange={(e) => setAdminPassword(e.target.value)}
-                    placeholder="Enter password..."
-                    style={{
-                      width: "100%",
-                      padding: "10px 12px",
-                      background: "#f8fafc",
-                      border: "2px solid #1e293b",
-                      borderRadius: "8px",
-                      color: "#1e293b",
-                      fontSize: "0.95rem"
-                    }}
-                    autoFocus
-                  />
-                </div>
-                <button 
-                  type="submit" 
-                  style={{
-                    width: "100%",
-                    padding: "10px",
-                    background: "#4ade80",
-                    border: "2px solid #1e293b",
-                    color: "#1e293b",
-                    borderRadius: "8px",
-                    fontWeight: "900",
-                    boxShadow: "0 3px 0 #1e293b",
-                    cursor: "pointer"
-                  }}
-                >
-                  비밀번호 인증
-                </button>
-                <p style={{ fontSize: "0.75rem", color: "#94a3b8", textAlign: "center" }}>
-                  기본 암호는 <code>saebu2026</code> 입니다.
-                </p>
-              </form>
-            ) : (
-              // IF AUTHENTICATED
-              <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
-                
-                {/* 1. Target Score Setting */}
-                <section style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                  <h4 style={{ fontSize: "0.95rem", color: "#1e293b", fontWeight: "bold", borderBottom: "2px solid #1e293b", paddingBottom: "4px" }}>
-                    트랙 완주 목표 점수
-                  </h4>
-                  <form onSubmit={handleSaveTargetScore} style={{ display: "flex", gap: "8px" }}>
-                    <input 
-                      type="number" 
-                      value={targetScoreInput}
-                      onChange={(e) => setTargetScoreInput(e.target.value)}
-                      style={{
-                        flex: 1,
-                        padding: "8px 12px",
-                        background: "#f8fafc",
-                        border: "2px solid #1e293b",
-                        borderRadius: "8px",
-                        color: "#1e293b"
-                      }}
-                    />
-                    <button 
-                      type="submit"
-                      style={{
-                        padding: "8px 16px",
-                        background: "#f59e0b",
-                        color: "#1e293b",
-                        border: "2px solid #1e293b",
-                        borderRadius: "8px",
-                        fontWeight: "900",
-                        boxShadow: "0 3px 0 #1e293b",
-                        cursor: "pointer"
-                      }}
-                    >
-                      변경
-                    </button>
-                  </form>
-                </section>
-
-                {/* 2. Firebase settings */}
-                <section style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                  <h4 style={{ fontSize: "0.95rem", color: "#1e293b", fontWeight: "bold", borderBottom: "2px solid #1e293b", paddingBottom: "4px" }}>
-                    Firebase 연결 설정
-                  </h4>
-                  {isFirebaseConnected ? (
-                    <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#16a34a", fontSize: "0.85rem", background: "rgba(34, 197, 94, 0.15)", padding: "8px 12px", borderRadius: "8px", border: "2px solid #16a34a" }}>
-                      <Database size={16} />
-                      <span>Firebase 연결 완료! (실시간 연동 적용 중)</span>
-                    </div>
-                  ) : (
-                    <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#ca8a04", fontSize: "0.85rem", background: "rgba(234, 179, 8, 0.15)", padding: "8px 12px", borderRadius: "8px", border: "2px solid #ca8a04" }}>
-                      <AlertTriangle size={16} />
-                      <span>로컬 브로드캐스트 모드 실행 중</span>
-                    </div>
-                  )}
-
-                  <form onSubmit={handleSaveFirebaseConfig} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                    <div>
-                      <label style={{ display: "block", fontSize: "0.8rem", color: "#475569", marginBottom: "4px" }}>API Key</label>
-                      <input 
-                        type="text" 
-                        value={fbApiKey}
-                        onChange={(e) => setFbApiKey(e.target.value)}
-                        style={{ width: "100%", padding: "8px 12px", background: "#f8fafc", border: "2px solid #1e293b", borderRadius: "8px", color: "#1e293b", fontSize: "0.85rem" }}
-                      />
-                    </div>
-                    <div>
-                      <label style={{ display: "block", fontSize: "0.8rem", color: "#475569", marginBottom: "4px" }}>Database URL</label>
-                      <input 
-                        type="text" 
-                        value={fbDbUrl}
-                        onChange={(e) => setFbDbUrl(e.target.value)}
-                        style={{ width: "100%", padding: "8px 12px", background: "#f8fafc", border: "2px solid #1e293b", borderRadius: "8px", color: "#1e293b", fontSize: "0.85rem" }}
-                      />
-                    </div>
-                    <div>
-                      <label style={{ display: "block", fontSize: "0.8rem", color: "#475569", marginBottom: "4px" }}>Project ID</label>
-                      <input 
-                        type="text" 
-                        value={fbProjectId}
-                        onChange={(e) => setFbProjectId(e.target.value)}
-                        style={{ width: "100%", padding: "8px 12px", background: "#f8fafc", border: "2px solid #1e293b", borderRadius: "8px", color: "#1e293b", fontSize: "0.85rem" }}
-                      />
-                    </div>
-
-                    <div style={{ display: "flex", gap: "8px", marginTop: "4px" }}>
-                      <button 
-                        type="submit"
-                        style={{
-                          flex: 1,
-                          padding: "10px",
-                          background: "#3b82f6",
-                          color: "white",
-                          border: "2px solid #1e293b",
-                          borderRadius: "8px",
-                          fontWeight: "900",
-                          boxShadow: "0 3px 0 #1e293b",
-                          cursor: "pointer"
-                        }}
-                      >
-                        저장 & 연결
-                      </button>
-                      
-                      {getSavedFirebaseConfig() && (
-                        <button 
-                          type="button"
-                          onClick={handleClearFirebaseConfig}
-                          style={{
-                            padding: "10px 14px",
-                            background: "#ef4444",
-                            color: "white",
-                            border: "2px solid #1e293b",
-                            borderRadius: "8px",
-                            fontWeight: "900",
-                            boxShadow: "0 3px 0 #1e293b",
-                            cursor: "pointer"
-                          }}
-                        >
-                          해제
-                        </button>
-                      )}
-                    </div>
-                  </form>
-                </section>
-
-                {/* 3. Submissions deletion */}
-                <section style={{ display: "flex", flexDirection: "column", gap: "10px", flex: 1, minHeight: 0 }}>
-                  <h4 style={{ fontSize: "0.95rem", color: "#1e293b", fontWeight: "bold", borderBottom: "2px solid #1e293b", paddingBottom: "4px" }}>
-                    제출 기록 관리
-                  </h4>
-                  
-                  <div style={{ 
-                    flex: 1,
-                    overflowY: "auto",
-                    border: "2px solid #1e293b",
-                    borderRadius: "8px",
-                    background: "#f8fafc",
-                    maxHeight: "220px"
-                  }}>
-                    {submissions.length === 0 ? (
-                      <p style={{ padding: "1rem", fontSize: "0.8rem", color: "#64748b", textAlign: "center" }}>제출 내역이 없습니다.</p>
-                    ) : (
-                      <table style={{ width: "100%", fontSize: "0.8rem", borderCollapse: "collapse", color: "#475569" }}>
-                        <thead>
-                          <tr style={{ background: "#e2e8f0", borderBottom: "2px solid #1e293b", textAlign: "left" }}>
-                            <th style={{ padding: "8px" }}>팀</th>
-                            <th style={{ padding: "8px" }}>미션</th>
-                            <th style={{ padding: "8px" }}>점수</th>
-                            <th style={{ padding: "8px", width: "40px" }}></th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {submissions.map((sub, i) => (
-                            <tr key={sub.id || i} style={{ borderBottom: "1px solid #cbd5e1" }}>
-                              <td style={{ padding: "8px", fontWeight: "bold" }}>{sub.teamId}팀</td>
-                              <td style={{ padding: "8px" }}>{sub.missionName} ({sub.count}회)</td>
-                              <td style={{ padding: "8px", color: "#1e293b" }}>{sub.totalPoints}점</td>
-                              <td style={{ padding: "8px" }}>
-                                <button 
-                                  onClick={() => {
-                                    if(window.confirm(`[${sub.teamId}팀] ${sub.missionName} (+${sub.totalPoints}점) 건을 삭제하겠습니까?`)) {
-                                      deleteSubmission(sub.id);
-                                    }
-                                  }}
-                                  style={{
-                                    background: "none",
-                                    border: "none",
-                                    color: "#ef4444",
-                                    cursor: "pointer",
-                                    display: "flex",
-                                    alignItems: "center"
-                                  }}
-                                >
-                                  <Trash2 size={14} />
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    )}
-                  </div>
-                </section>
-              </div>
-            )}
           </div>
         </div>
       )}

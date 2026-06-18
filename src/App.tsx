@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Dashboard } from './components/Dashboard';
 import { InputForm } from './components/InputForm';
+import { AdminPanel } from './components/AdminPanel';
 import { Intro } from './components/Intro';
 
 function App() {
-  const [mode, setMode] = useState<'dashboard' | 'input'>('dashboard');
+  const [mode, setMode] = useState<'dashboard' | 'input' | 'admin'>('dashboard');
   const [showIntro, setShowIntro] = useState<boolean>(true);
 
   useEffect(() => {
@@ -15,6 +16,9 @@ function App() {
       if (urlMode === 'input') {
         setMode('input');
         setShowIntro(false); // No intro for mobile input form
+      } else if (urlMode === 'admin') {
+        setMode('admin');
+        setShowIntro(false); // No intro for admin page
       } else {
         setMode('dashboard');
         // Keep intro on dashboard load
@@ -38,6 +42,8 @@ function App() {
         <Intro onStart={() => setShowIntro(false)} />
       ) : mode === 'input' ? (
         <InputForm />
+      ) : mode === 'admin' ? (
+        <AdminPanel />
       ) : (
         <Dashboard />
       )}

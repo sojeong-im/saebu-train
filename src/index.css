@@ -229,6 +229,14 @@ body {
   align-items: center;
 }
 
+/* PC/Mobile view toggle helper */
+.pc-hide {
+  display: none !important;
+}
+.admin-grid-cols {
+  grid-template-columns: 1fr 1fr !important;
+}
+
 /* 2D wood slab ties railroad track */
 .railroad-ties-2d {
   position: absolute;
@@ -525,9 +533,15 @@ body {
     width: 28px !important;
   }
 
-  /* Mobile Hide helper */
+  /* Mobile Hide/Show helper */
   .mobile-hide {
     display: none !important;
+  }
+  .pc-hide {
+    display: flex !important;
+  }
+  .admin-grid-cols {
+    grid-template-columns: 1fr !important;
   }
 
   /* Rail signs scaling */
