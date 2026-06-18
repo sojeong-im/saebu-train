@@ -340,3 +340,178 @@ body {
   animation: wheel-spin 0.3s infinite linear;
   transform-origin: center;
 }
+
+/* ==========================================================================
+   MOBILE & TABLET RESPONSIVE STYLES
+   ========================================================================== */
+@media (max-width: 768px) {
+  body {
+    background: linear-gradient(to bottom, var(--bg-sky-top) 0%, var(--bg-sky-bottom) 30%, #bbf7d0 30%, #86efac 100%);
+  }
+
+  /* Flags banner adjustment */
+  .flags-banner {
+    justify-content: space-around;
+  }
+  .flag-triangle {
+    border-left-width: 10px;
+    border-right-width: 10px;
+    border-top-width: 20px;
+  }
+
+  /* Header adjustments */
+  header {
+    padding: 0.8rem 1rem !important;
+    margin-bottom: 0.5rem !important;
+    gap: 8px;
+  }
+  .game-title-text {
+    font-size: 1.6rem !important;
+    text-shadow: 
+      -2px -2px 0 #1e293b,  
+       2px -2px 0 #1e293b,
+      -2px  2px 0 #1e293b,
+       2px  2px 0 #1e293b,
+       0px  4px 0 rgba(0, 0, 0, 0.3);
+  }
+  header p {
+    font-size: 0.75rem !important;
+  }
+
+  /* Dashboard Stats Board */
+  header > div:last-child {
+    gap: 6px !important;
+  }
+  .game-card {
+    padding: 6px 10px !important;
+    border-width: 3px !important;
+    border-radius: 10px !important;
+  }
+  .game-card span {
+    font-size: 0.9rem !important;
+  }
+  .game-card span.digital-font {
+    font-size: 1.1rem !important;
+  }
+  .game-card div:nth-child(2) {
+    height: 14px !important;
+    width: 2px !important;
+  }
+
+  /* Leaderboard notice banner */
+  div[style*="padding: 0 2rem"] {
+    padding: 0 0.75rem !important;
+  }
+  div[style*="padding: 0 2rem"] > .game-card {
+    padding: 8px 12px !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    align-items: stretch !important;
+    text-align: center !important;
+  }
+  div[style*="padding: 0 2rem"] h2 {
+    font-size: 0.85rem !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+  }
+  div[style*="padding: 0 2rem"] a {
+    width: 100% !important;
+    text-align: center !important;
+  }
+
+  /* Main track container */
+  div[style*="padding: 0 2rem 2rem 2rem"] {
+    padding: 0 0.75rem 1rem 0.75rem !important;
+  }
+  div[style*="padding: 0 2rem 2rem 2rem"] > section {
+    padding: 1rem 0.75rem 0.75rem 0.75rem !important;
+    border-width: 3px !important;
+    border-radius: 12px !important;
+  }
+
+  /* Tracks height & scaling */
+  .racing-track-row {
+    height: 64px !important;
+  }
+  .railroad-ties-2d {
+    bottom: 8px !important;
+    height: 8px !important;
+  }
+  .railroad-steel-2d {
+    bottom: 14px !important;
+  }
+
+  /* Rail signs scaling */
+  .rail-number-sign {
+    width: 38px !important;
+    height: 26px !important;
+    font-size: 0.7rem !important;
+    border-width: 2px !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 0 #1e293b !important;
+  }
+  .team-badge-sign {
+    padding: 2px 5px !important;
+    font-size: 0.65rem !important;
+    border-width: 1.5px !important;
+    border-radius: 6px !important;
+    box-shadow: 0 2px 0 #1e293b !important;
+  }
+
+  /* Checkered Finish Line Positioning */
+  div[style*="right: 80px"] {
+    right: 25px !important;
+    top: 55px !important;
+    bottom: 45px !important;
+  }
+  div[style*="right: 80px"] > div:first-child {
+    font-size: 0.7rem !important;
+    padding: 2px 8px !important;
+    border-width: 2px !important;
+    border-radius: 6px !important;
+    box-shadow: 0 2px 0 #1e293b !important;
+  }
+  .finish-line-checker {
+    width: 28px !important;
+    background-size: 14px 14px !important;
+    background-position: 0 0, 7px 7px !important;
+  }
+
+  /* Train resizing for mobile (scale down SVG) */
+  .game-train-wrapper {
+    bottom: 3px !important;
+    height: 40px !important;
+    transform: scale(0.68) !important;
+    transform-origin: bottom right !important;
+  }
+
+  /* Track Bottom scale texts */
+  div[style*="border-top: 3px solid #1e293b"] {
+    padding-left: 95px !important;
+    padding-right: 25px !important;
+    font-size: 0.7rem !important;
+    border-top-width: 2px !important;
+    padding-top: 8px !important;
+  }
+
+  /* Mobile popup toast adjustment */
+  .pop-toast-card {
+    width: auto !important;
+    left: 15px !important;
+    right: 15px !important;
+    bottom: 15px !important;
+    padding: 10px 12px !important;
+    border-width: 3px !important;
+    border-radius: 12px !important;
+  }
+  .pop-toast-card span[style*="font-size: 1.8rem"] {
+    font-size: 1.4rem !important;
+  }
+  .pop-toast-card strong {
+    font-size: 0.8rem !important;
+  }
+  .pop-toast-card span {
+    font-size: 0.7rem !important;
+  }
+}
+

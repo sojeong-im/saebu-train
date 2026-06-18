@@ -390,7 +390,7 @@ export const Dashboard: React.FC = () => {
       </div>
 
       {/* MAIN RACING TRACK & PANEL */}
-      <div style={{ padding: "0 2rem 2rem 2rem", flex: 1, display: "flex", flexDirection: "column", zIndex: 10 }}>
+      <div className="dashboard-main-grid" style={{ padding: "0 2rem 2rem 2rem", flex: 1, display: "flex", flexDirection: "column", zIndex: 10 }}>
         <section className="game-card" style={{ 
           padding: "2rem 1.5rem 1.5rem 1.5rem", 
           flex: 1, 
