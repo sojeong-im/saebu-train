@@ -10,7 +10,7 @@ export const InputForm: React.FC = () => {
   const [selectedTeamId, setSelectedTeamId] = useState<number>(1);
   const [expandedCategory, setExpandedCategory] = useState<string>("basic_missions");
   
-  // Track count of each mission: { [missionId]: count }
+  // Track counts of each mission
   const [missionCounts, setMissionCounts] = useState<{ [key: string]: number }>({});
   
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -18,7 +18,7 @@ export const InputForm: React.FC = () => {
   const [timeLeftText, setTimeLeftText] = useState("");
   const [isFirebaseConnected, setIsFirebaseConnected] = useState(false);
 
-  // Check deadline and firebase state
+  // Sync deadline and firebase state
   useEffect(() => {
     const checkStatus = () => {
       const now = Date.now();
@@ -27,7 +27,7 @@ export const InputForm: React.FC = () => {
 
       if (diff <= 0) {
         setIsEnded(true);
-        setTimeLeftText("경기 종료 (데이터 입력이 차단되었습니다)");
+        setTimeLeftText("경기 종료! (점수 입력 차단됨)");
       } else {
         setIsEnded(false);
         const hours = Math.floor(diff / (1000 * 60 * 60));
@@ -44,7 +44,6 @@ export const InputForm: React.FC = () => {
     return () => clearInterval(timer);
   }, []);
 
-  // Increment mission count
   const incrementCount = (missionId: string) => {
     if (isEnded) return;
     setMissionCounts(prev => ({
@@ -53,7 +52,6 @@ export const InputForm: React.FC = () => {
     }));
   };
 
-  // Decrement mission count (bounded at 0)
   const decrementCount = (missionId: string) => {
     if (isEnded) return;
     setMissionCounts(prev => ({
@@ -62,7 +60,6 @@ export const InputForm: React.FC = () => {
     }));
   };
 
-  // Calculate sum of selected points
   const calculateTotalPoints = () => {
     let sum = 0;
     MISSION_CATEGORIES.forEach(cat => {
@@ -74,7 +71,7 @@ export const InputForm: React.FC = () => {
     return sum;
   };
 
-  // Form submission handler
+  // Submit to Firebase
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isEnded) {
@@ -84,11 +81,10 @@ export const InputForm: React.FC = () => {
 
     const totalPoints = calculateTotalPoints();
     if (totalPoints === 0) {
-      alert("최소 1개 이상의 미션 횟수를 입력해 주세요.");
+      alert("최소 1개 이상의 미션 횟수를 선택해 주세요.");
       return;
     }
 
-    // Double check local system time
     if (Date.now() > DEADLINE_TIMESTAMP) {
       setIsEnded(true);
       alert("경기가 종료되어 점수 제출이 차단되었습니다.");
@@ -104,7 +100,6 @@ export const InputForm: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      // Loop through all selected missions and submit them
       let submitCount = 0;
       for (const cat of MISSION_CATEGORIES) {
         for (const item of cat.items) {
@@ -120,7 +115,7 @@ export const InputForm: React.FC = () => {
               "leader"
             );
             if (!res.success) {
-              throw new Error(res.error || "제출 중 알 수 없는 에러 발생");
+              throw new Error(res.error || "제출 중 에러가 발생했습니다.");
             }
             submitCount++;
           }
@@ -129,17 +124,16 @@ export const InputForm: React.FC = () => {
 
       if (submitCount > 0) {
         alert("점수가 성공적으로 대시보드에 연동되었습니다!");
-        // Reset counts
         setMissionCounts({});
       }
     } catch (err: any) {
-      alert(`제출에 실패했습니다: ${err.message || err}`);
+      alert(`제출 실패: ${err.message || err}`);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const getTeamColorBorder = (teamId: number) => {
+  const getTeamColor = (teamId: number) => {
     switch (teamId) {
       case 1: return "var(--team1-color)";
       case 2: return "var(--team2-color)";
@@ -151,7 +145,15 @@ export const InputForm: React.FC = () => {
   };
 
   return (
-    <div style={{ maxWidth: "560px", margin: "0 auto", padding: "1rem", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+    <div style={{ 
+      maxWidth: "520px", 
+      margin: "0 auto", 
+      padding: "1.5rem 1rem", 
+      minHeight: "100vh", 
+      display: "flex", 
+      flexDirection: "column",
+      background: "#f0f9ff" /* Light sky blue background */
+    }}>
       
       {/* HEADER NAVIGATION */}
       <header style={{ 
@@ -159,68 +161,72 @@ export const InputForm: React.FC = () => {
         justifyContent: "space-between", 
         alignItems: "center", 
         marginBottom: "1rem",
-        borderBottom: "1px solid #1e293b",
+        borderBottom: "3px solid #1e293b",
         paddingBottom: "10px"
       }}>
         <a href="?mode=dashboard" style={{
           display: "flex",
           alignItems: "center",
           gap: "4px",
-          color: "#94a3b8",
-          fontSize: "0.85rem",
+          color: "#1e293b",
+          fontSize: "0.9rem",
           textDecoration: "none",
-          fontWeight: "600"
+          fontWeight: "900",
+          fontFamily: "var(--font-game)"
         }}>
-          <ArrowLeft size={16} /> 대시보드 보기
+          <ArrowLeft size={16} /> 대시보드 화면
         </a>
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-          <Smartphone size={16} className="text-blue-400" />
-          <span className="display-font" style={{ fontSize: "0.85rem", color: "#f8fafc", fontWeight: "700" }}>
-            SUBMISSION PANEL
+          <Smartphone size={16} className="text-slate-800" />
+          <span style={{ fontSize: "0.85rem", color: "#1e293b", fontWeight: "900", fontFamily: "var(--font-game)", letterSpacing: "0.5px" }}>
+            SCORE INPUT
           </span>
         </div>
       </header>
 
-      {/* CLOCK & SYSTEM DEADLINE ALERT BANNER */}
-      <div className="cyber-card" style={{ 
+      {/* SYSTEM TIMING ALERT BANNER */}
+      <div className="game-card" style={{ 
         padding: "10px 14px", 
         marginBottom: "1.2rem",
-        borderLeft: `4px solid ${isEnded ? "#ef4444" : "#eab308"}`,
-        background: isEnded ? "rgba(239, 68, 68, 0.05)" : "rgba(234, 179, 8, 0.05)",
+        background: isEnded ? "#fee2e2" : "#fef9c3",
+        borderWidth: "3px",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        fontSize: "0.8rem"
+        fontSize: "0.85rem",
+        boxShadow: "0 4px 0 #1e293b"
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <AlertTriangle size={16} style={{ color: isEnded ? "#ef4444" : "#eab308" }} />
-          <span style={{ fontWeight: "600", color: isEnded ? "#ef4444" : "#eab308" }}>
+          <AlertTriangle size={16} style={{ color: isEnded ? "#ef4444" : "#d97706" }} />
+          <span style={{ fontWeight: "900", color: isEnded ? "#b91c1c" : "#a16207", fontFamily: "var(--font-game)" }}>
             {timeLeftText}
           </span>
         </div>
         <span style={{ 
-          fontSize: "0.7rem", 
-          background: isFirebaseConnected ? "rgba(16, 185, 129, 0.15)" : "rgba(234, 179, 8, 0.15)",
-          color: isFirebaseConnected ? "#10b981" : "#eab308",
-          padding: "2px 6px",
-          borderRadius: "4px"
+          fontSize: "0.75rem", 
+          background: "#1e293b",
+          color: "#fff",
+          padding: "2px 8px", 
+          borderRadius: "6px",
+          fontWeight: "bold"
         }}>
-          {isFirebaseConnected ? "Firebase 실시간" : "로컬 브로드캐스트"}
+          {isFirebaseConnected ? "실시간 연동" : "로컬 모드"}
         </span>
       </div>
 
-      {/* SUBMISSION FORM */}
+      {/* INPUT FORM CONTENT */}
       <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.2rem", flex: 1 }}>
         
-        {/* TEAM CHIPS SELECTOR */}
+        {/* TEAM SELECTION 3D CHIPS */}
         <section style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-          <span className="cyber-badge" style={{ color: "#94a3b8", background: "rgba(30, 41, 59, 0.5)", alignSelf: "flex-start" }}>
-            1단계: 제출 팀 선택
+          <span style={{ color: "#1e293b", fontFamily: "var(--font-game)", fontWeight: "900", fontSize: "0.9rem", alignSelf: "flex-start" }}>
+            1단계: 완수 팀을 고르세요!
           </span>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "6px" }}>
+          
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "8px" }}>
             {TEAMS.map((t) => {
               const isSelected = selectedTeamId === t.teamId;
-              const activeColor = getTeamColorBorder(t.teamId);
+              const activeColor = getTeamColor(t.teamId);
               
               return (
                 <button
@@ -229,24 +235,27 @@ export const InputForm: React.FC = () => {
                   onClick={() => setSelectedTeamId(t.teamId)}
                   disabled={isEnded}
                   style={{
-                    padding: "10px 4px",
-                    background: isSelected ? activeColor : "#0b1329",
-                    border: `1px solid ${isSelected ? activeColor : "#1e293b"}`,
-                    color: isSelected ? "#020617" : "#94a3b8",
-                    borderRadius: "6px",
-                    fontSize: "0.8rem",
-                    fontWeight: "bold",
+                    padding: "12px 4px 8px 4px",
+                    background: isSelected ? activeColor : "#ffffff",
+                    border: "3px solid #1e293b",
+                    color: isSelected ? "#ffffff" : "#1e293b",
+                    borderRadius: "12px",
+                    fontSize: "0.85rem",
+                    fontWeight: "900",
+                    fontFamily: "var(--font-game)",
                     cursor: "pointer",
-                    transition: "all 0.2s",
+                    transition: "all 0.08s",
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
-                    gap: "2px",
-                    boxShadow: isSelected ? `0 0 10px ${activeColor}` : "none",
+                    gap: "4px",
+                    // Tactile 3D button click translation
+                    transform: isSelected ? "translateY(3px)" : "translateY(0)",
+                    boxShadow: isSelected ? "0 1px 0 #1e293b" : "0 4px 0 #1e293b",
                     opacity: isEnded ? 0.5 : 1
                   }}
                 >
-                  <span style={{ fontSize: "1.2rem" }}>🚂</span>
+                  <span style={{ fontSize: "1.4rem" }}>🚂</span>
                   <span>{t.teamId}팀</span>
                 </button>
               );
@@ -254,38 +263,42 @@ export const InputForm: React.FC = () => {
           </div>
         </section>
 
-        {/* MISSION CATEGORIES ACCORDION */}
+        {/* ACCORDION CATEGORIES */}
         <section style={{ display: "flex", flexDirection: "column", gap: "8px", flex: 1 }}>
-          <span className="cyber-badge" style={{ color: "#94a3b8", background: "rgba(30, 41, 59, 0.5)", alignSelf: "flex-start" }}>
-            2단계: 완수한 미션 횟수 조절
+          <span style={{ color: "#1e293b", fontFamily: "var(--font-game)", fontWeight: "900", fontSize: "0.9rem", alignSelf: "flex-start" }}>
+            2단계: 미션 횟수를 설정해 주세요!
           </span>
           
-          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             {MISSION_CATEGORIES.map((category) => {
               const isOpen = expandedCategory === category.key;
-              
-              // Sum counts in this category
+              const activeColor = getTeamColor(selectedTeamId);
               const categoryCountSum = category.items.reduce((sum, item) => sum + (missionCounts[item.id] || 0), 0);
 
               return (
                 <div 
                   key={category.key} 
-                  className="cyber-card" 
+                  className="game-card" 
                   style={{ 
-                    border: `1px solid ${isOpen ? getTeamColorBorder(selectedTeamId) : "#1e293b"}`,
-                    borderRadius: "8px" 
+                    borderWidth: "3px",
+                    borderColor: isOpen ? activeColor : "#1e293b",
+                    borderRadius: "12px",
+                    background: "#ffffff",
+                    overflow: "hidden",
+                    // Apply slightly smaller shadow to fit well
+                    boxShadow: isOpen ? `0 4px 0 ${activeColor}` : "0 4px 0 #1e293b"
                   }}
                 >
-                  {/* Category Toggle Bar */}
+                  {/* Toggle header bar */}
                   <button
                     type="button"
                     onClick={() => setExpandedCategory(isOpen ? "" : category.key)}
                     style={{
                       width: "100%",
                       padding: "12px 16px",
-                      background: "rgba(11, 19, 41, 0.8)",
+                      background: isOpen ? "rgba(241, 245, 249, 0.5)" : "#ffffff",
                       border: "none",
-                      color: "#f8fafc",
+                      color: "#1e293b",
                       display: "flex",
                       justifyContent: "space-between",
                       alignItems: "center",
@@ -293,29 +306,30 @@ export const InputForm: React.FC = () => {
                     }}
                   >
                     <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                      <span style={{ fontWeight: "700", fontSize: "0.95rem" }}>{category.title}</span>
+                      <span style={{ fontWeight: "900", fontSize: "0.95rem", fontFamily: "var(--font-game)" }}>{category.title}</span>
                       {categoryCountSum > 0 && (
                         <span style={{ 
-                          background: getTeamColorBorder(selectedTeamId), 
-                          color: "#020617", 
-                          fontSize: "0.7rem", 
-                          padding: "1px 6px", 
-                          borderRadius: "10px",
-                          fontWeight: "bold"
+                          background: activeColor, 
+                          color: "#ffffff", 
+                          fontSize: "0.75rem", 
+                          padding: "2px 8px", 
+                          borderRadius: "12px",
+                          fontWeight: "bold",
+                          fontFamily: "var(--font-game)"
                         }}>
-                          {categoryCountSum}건 선택됨
+                          {categoryCountSum}건
                         </span>
                       )}
                     </div>
                     {isOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                   </button>
 
-                  {/* Category Items List */}
+                  {/* List of items */}
                   {isOpen && (
                     <div style={{ 
                       padding: "8px 12px", 
-                      borderTop: "1px solid #1e293b",
-                      background: "#020617",
+                      borderTop: "3px solid #1e293b",
+                      background: "#f8fafc",
                       display: "flex",
                       flexDirection: "column",
                       gap: "8px"
@@ -330,44 +344,46 @@ export const InputForm: React.FC = () => {
                               display: "flex", 
                               justifyContent: "space-between", 
                               alignItems: "center",
-                              padding: "6px 8px",
-                              borderBottom: "1px solid rgba(30, 41, 59, 0.3)",
+                              padding: "8px",
+                              borderBottom: "2px dashed #e2e8f0",
                               fontSize: "0.85rem"
                             }}
                           >
                             <div style={{ display: "flex", flexDirection: "column" }}>
-                              <span style={{ color: "#e2e8f0", fontWeight: "600" }}>{item.name}</span>
-                              <span style={{ color: "#64748b", fontSize: "0.75rem" }}>개당 +{item.points}점</span>
+                              <span style={{ color: "#1e293b", fontWeight: "800", fontSize: "0.9rem" }}>{item.name}</span>
+                              <span style={{ color: "#64748b", fontSize: "0.75rem", fontWeight: "bold" }}>건당 +{item.points}점</span>
                             </div>
 
-                            {/* Plus / Minus Counter Group */}
+                            {/* Counter Controls */}
                             <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                               <button
                                 type="button"
                                 onClick={() => decrementCount(item.id)}
                                 disabled={count === 0 || isEnded}
                                 style={{
-                                  width: "28px",
-                                  height: "28px",
+                                  width: "30px",
+                                  height: "30px",
                                   borderRadius: "50%",
-                                  background: count > 0 ? "rgba(239, 68, 68, 0.15)" : "#0b1329",
-                                  border: `1px solid ${count > 0 ? "rgba(239, 68, 68, 0.4)" : "#1e293b"}`,
-                                  color: count > 0 ? "#ef4444" : "#475569",
+                                  background: count > 0 ? "#fee2e2" : "#e2e8f0",
+                                  border: "2px solid #1e293b",
+                                  color: count > 0 ? "#ef4444" : "#94a3b8",
                                   cursor: count > 0 && !isEnded ? "pointer" : "default",
                                   display: "flex",
                                   alignItems: "center",
-                                  justifyContent: "center"
+                                  justifyContent: "center",
+                                  boxShadow: count > 0 ? "0 2px 0 #1e293b" : "none",
+                                  transform: count > 0 ? "none" : "translateY(2px)"
                                 }}
                               >
-                                <Minus size={14} />
+                                <Minus size={14} strokeWidth={3} />
                               </button>
 
                               <span className="digital-font" style={{ 
-                                width: "20px", 
+                                width: "22px", 
                                 textAlign: "center", 
-                                fontSize: "1.05rem",
+                                fontSize: "1.1rem",
                                 fontWeight: "bold",
-                                color: count > 0 ? getTeamColorBorder(selectedTeamId) : "#475569"
+                                color: count > 0 ? activeColor : "#94a3b8"
                               }}>
                                 {count}
                               </span>
@@ -377,19 +393,21 @@ export const InputForm: React.FC = () => {
                                 onClick={() => incrementCount(item.id)}
                                 disabled={isEnded}
                                 style={{
-                                  width: "28px",
-                                  height: "28px",
+                                  width: "30px",
+                                  height: "30px",
                                   borderRadius: "50%",
-                                  background: "rgba(59, 130, 246, 0.15)",
-                                  border: "1px solid rgba(59, 130, 246, 0.4)",
-                                  color: "#60a5fa",
+                                  background: "#dbeafe",
+                                  border: "2px solid #1e293b",
+                                  color: "#2563eb",
                                   cursor: isEnded ? "default" : "pointer",
                                   display: "flex",
                                   alignItems: "center",
-                                  justifyContent: "center"
+                                  justifyContent: "center",
+                                  boxShadow: "0 2px 0 #1e293b",
+                                  transform: isEnded ? "translateY(2px)" : "none"
                                 }}
                               >
-                                <Plus size={14} />
+                                <Plus size={14} strokeWidth={3} />
                               </button>
                             </div>
                           </div>
@@ -403,31 +421,33 @@ export const InputForm: React.FC = () => {
           </div>
         </section>
 
-        {/* BOTTOM FLOATING SCORE ACTION BAR */}
-        <div className="cyber-card" style={{
-          padding: "14px",
-          background: "linear-gradient(135deg, #0b1329 0%, #060a16 100%)",
-          borderTop: `2px solid ${getTeamColorBorder(selectedTeamId)}`,
-          borderRadius: "8px",
+        {/* BOTTOM ACTION BUTTON BAR */}
+        <div className="game-card" style={{
+          padding: "16px",
+          background: "#ffffff",
+          borderWidth: "4px",
+          borderColor: getTeamColor(selectedTeamId),
+          borderRadius: "16px",
           display: "flex",
           flexDirection: "column",
-          gap: "10px",
-          marginTop: "auto"
+          gap: "12px",
+          marginTop: "auto",
+          boxShadow: `0 6px 0 ${getTeamColor(selectedTeamId)}`
         }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div>
-              <span style={{ fontSize: "0.75rem", color: "#64748b" }}>선택한 팀:</span>
-              <strong style={{ display: "block", fontSize: "0.9rem", color: getTeamColorBorder(selectedTeamId) }}>
+              <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: "bold" }}>대상 팀:</span>
+              <strong style={{ display: "block", fontSize: "0.95rem", color: getTeamColor(selectedTeamId), fontFamily: "var(--font-game)", fontWeight: "900" }}>
                 {TEAMS.find(t => t.teamId === selectedTeamId)?.teamName}
               </strong>
             </div>
             <div style={{ textAlign: "right" }}>
-              <span style={{ fontSize: "0.75rem", color: "#64748b" }}>합산 예정 점수:</span>
+              <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: "bold" }}>제출 득점:</span>
               <span className="digital-font" style={{ 
                 display: "block", 
-                fontSize: "1.4rem", 
+                fontSize: "1.5rem", 
                 fontWeight: "bold",
-                color: calculateTotalPoints() > 0 ? "#10b981" : "#475569" 
+                color: calculateTotalPoints() > 0 ? "#16a34a" : "#94a3b8" 
               }}>
                 +{calculateTotalPoints()}점
               </span>
@@ -439,26 +459,29 @@ export const InputForm: React.FC = () => {
             disabled={isEnded || isSubmitting || calculateTotalPoints() === 0}
             style={{
               width: "100%",
-              padding: "12px",
-              background: isEnded ? "#1e293b" : getTeamColorBorder(selectedTeamId),
-              color: isEnded ? "#475569" : "#020617",
-              border: "none",
-              borderRadius: "6px",
-              fontWeight: "800",
-              fontSize: "0.95rem",
+              padding: "14px",
+              background: isEnded ? "#e2e8f0" : getTeamColor(selectedTeamId),
+              color: isEnded ? "#94a3b8" : "#ffffff",
+              border: "3px solid #1e293b",
+              borderRadius: "12px",
+              fontWeight: "900",
+              fontSize: "1rem",
+              fontFamily: "var(--font-game)",
               cursor: isEnded || isSubmitting || calculateTotalPoints() === 0 ? "default" : "pointer",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               gap: "8px",
-              boxShadow: !isEnded && calculateTotalPoints() > 0 ? `0 0 15px ${getTeamColorBorder(selectedTeamId)}` : "none",
-              transition: "all 0.2s",
+              // Large 3D button effect
+              boxShadow: !isEnded && calculateTotalPoints() > 0 ? "0 4px 0 #1e293b" : "none",
+              transform: !isEnded && calculateTotalPoints() > 0 ? "none" : "translateY(4px)",
+              transition: "all 0.1s",
               opacity: isEnded || calculateTotalPoints() === 0 ? 0.6 : 1
             }}
           >
             {isSubmitting ? (
               <>
-                <RefreshCw className="animate-spin" size={18} /> 제출 중...
+                <RefreshCw className="animate-spin" size={18} /> 점수 전송 중...
               </>
             ) : isEnded ? (
               <>
@@ -466,7 +489,7 @@ export const InputForm: React.FC = () => {
               </>
             ) : (
               <>
-                <Send size={18} /> 점수 제출하기
+                <Send size={18} /> 트랙으로 쏘기! 🚂
               </>
             )}
           </button>

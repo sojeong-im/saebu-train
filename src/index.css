@@ -1,30 +1,25 @@
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;600;800&family=Share+Tech+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Jua&family=Outfit:wght@400;600;800&family=Share+Tech+Mono&display=swap');
 
 :root {
-  --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-game: 'Jua', 'Outfit', sans-serif;
+  --font-sans: 'Outfit', sans-serif;
   --font-mono: 'Share Tech Mono', monospace;
-  --font-display: 'Orbitron', sans-serif;
 
-  /* Theme colors - Dark Industrial */
-  --bg-main: #020617; /* bg-slate-950 */
-  --bg-card: #0b1329;
-  --bg-card-light: #1c2541;
-  --border-color: #1e293b;
-  --border-glow: #3b82f6;
+  /* Bright Casual Game Color Scheme */
+  --bg-sky-top: #60a5fa; /* sky-400 */
+  --bg-sky-bottom: #93c5fd; /* sky-300 */
+  --bg-grass: #4ade80; /* green-400 */
+  --bg-grass-shadow: #22c55e; /* green-500 */
+  --bg-card: #ffffff;
+  --text-dark: #1e293b;
+  --border-color: #e2e8f0;
 
-  /* Team Accent Colors & Shadows */
-  --team1-color: #ef4444; /* Red */
-  --team1-glow: 0 0 15px rgba(239, 68, 68, 0.6);
-  --team2-color: #3b82f6; /* Blue */
-  --team2-glow: 0 0 15px rgba(59, 130, 246, 0.6);
-  --team3-color: #eab308; /* Yellow */
-  --team3-glow: 0 0 15px rgba(234, 179, 8, 0.6);
-  --team4-color: #10b981; /* Emerald */
-  --team4-glow: 0 0 15px rgba(16, 185, 129, 0.6);
-  --team5-color: #a855f7; /* Purple */
-  --team5-glow: 0 0 15px rgba(168, 85, 247, 0.6);
-
-  color-scheme: dark;
+  /* Team Accent Colors */
+  --team1-color: #3b82f6; /* Blue Steam Train */
+  --team2-color: #ef4444; /* Red bullet Train */
+  --team3-color: #22c55e; /* Green diesel Train */
+  --team4-color: #a855f7; /* Purple futuristic Train */
+  --team5-color: #f59e0b; /* Yellow mini Train */
 }
 
 * {
@@ -34,17 +29,12 @@
 }
 
 body {
-  background-color: var(--bg-main);
-  color: #f1f5f9;
+  background: linear-gradient(to bottom, var(--bg-sky-top) 0%, var(--bg-sky-bottom) 45%, #bbf7d0 45%, #86efac 100%);
+  color: var(--text-dark);
   font-family: var(--font-sans);
   min-height: 100vh;
   overflow-x: hidden;
-  position: relative;
-  /* Grid pattern in background to resemble blueprint/industrial blueprints */
-  background-image: 
-    linear-gradient(rgba(30, 41, 59, 0.2) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(30, 41, 59, 0.2) 1px, transparent 1px);
-  background-size: 20px 20px;
+  user-select: none;
 }
 
 #root {
@@ -53,261 +43,300 @@ body {
   flex-direction: column;
 }
 
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-track {
-  background: var(--bg-main);
-}
-::-webkit-scrollbar-thumb {
-  background: #1e293b;
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+/* 2D Cloud Floating Animation */
+@keyframes cloud-float-left {
+  0% { transform: translateX(-150px); }
+  100% { transform: translateX(calc(100vw + 150px)); }
 }
 
-/* Animations */
-@keyframes neon-flicker {
-  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
-    text-shadow: 0 0 4px #fff, 0 0 10px #3b82f6, 0 0 20px #3b82f6, 0 0 40px #2563eb;
-    opacity: 1;
-  }
-  20%, 24%, 55% {
-    text-shadow: none;
-    opacity: 0.7;
-  }
+.cloud {
+  position: absolute;
+  background: white;
+  border-radius: 100px;
+  filter: opacity(0.85);
+  pointer-events: none;
+  z-index: 1;
 }
 
-@keyframes led-scroll {
-  0% { transform: translateX(100%); }
-  100% { transform: translateX(-100%); }
+.cloud::before, .cloud::after {
+  content: '';
+  position: absolute;
+  background: white;
+  border-radius: 50%;
 }
 
-@keyframes smoke-puff {
+.cloud.size-sm {
+  width: 90px;
+  height: 30px;
+  animation: cloud-float-left 55s infinite linear;
+}
+.cloud.size-sm::before { width: 40px; height: 40px; top: -20px; left: 15px; }
+.cloud.size-sm::after { width: 30px; height: 30px; top: -15px; right: 15px; }
+
+.cloud.size-md {
+  width: 140px;
+  height: 45px;
+  animation: cloud-float-left 40s infinite linear;
+}
+.cloud.size-md::before { width: 65px; height: 65px; top: -30px; left: 20px; }
+.cloud.size-md::after { width: 50px; height: 50px; top: -20px; right: 20px; }
+
+.cloud.size-lg {
+  width: 200px;
+  height: 60px;
+  animation: cloud-float-left 25s infinite linear;
+}
+.cloud.size-lg::before { width: 90px; height: 90px; top: -45px; left: 30px; }
+.cloud.size-lg::after { width: 70px; height: 70px; top: -30px; right: 30px; }
+
+/* Party Flags (만국기) */
+.flags-banner {
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  justify-content: space-around;
+  pointer-events: none;
+  z-index: 5;
+  overflow: hidden;
+}
+
+.flag-triangle {
+  width: 0;
+  height: 0;
+  border-left: 14px solid transparent;
+  border-right: 14px solid transparent;
+  border-top: 28px solid transparent; /* Colored dynamically */
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.15));
+  transform-origin: top center;
+  animation: flag-wave 3s infinite ease-in-out;
+}
+
+@keyframes flag-wave {
+  0%, 100% { transform: rotate(3deg); }
+  50% { transform: rotate(-5deg); }
+}
+
+/* 2D Checkered Finish Line Pattern */
+.finish-line-checker {
+  width: 44px;
+  height: 100%;
+  background-color: #ffffff;
+  background-image: 
+    linear-gradient(45deg, #1e293b 25%, transparent 25%, transparent 75%, #1e293b 75%),
+    linear-gradient(45deg, #1e293b 25%, #ffffff 25%, #ffffff 75%, #1e293b 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 10px 10px;
+  box-shadow: -4px 0 10px rgba(0, 0, 0, 0.15), 4px 0 10px rgba(0, 0, 0, 0.15);
+  border-left: 2px solid #1e293b;
+  border-right: 2px solid #1e293b;
+  position: relative;
+}
+
+/* Cartoonish 3D Game Buttons & Panels */
+.game-card {
+  background: white;
+  border: 4px solid #1e293b;
+  border-radius: 16px;
+  box-shadow: 0 8px 0 #1e293b;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.game-card:hover {
+  transform: translateY(2px);
+  box-shadow: 0 6px 0 #1e293b;
+}
+
+.game-title-text {
+  font-family: var(--font-game);
+  color: #ffffff;
+  text-shadow: 
+    -3px -3px 0 #1e293b,  
+     3px -3px 0 #1e293b,
+    -3px  3px 0 #1e293b,
+     3px  3px 0 #1e293b,
+     0px  6px 0 rgba(0, 0, 0, 0.3);
+  letter-spacing: 1px;
+}
+
+/* Racing track styles */
+.racing-track-row {
+  height: 90px;
+  background: rgba(255, 255, 255, 0.15);
+  border-bottom: 3px dashed rgba(30, 41, 59, 0.15);
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: visible;
+}
+
+/* 2D wood slab ties railroad track */
+.railroad-ties-2d {
+  position: absolute;
+  bottom: 15px;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background-image: repeating-linear-gradient(
+    90deg,
+    #78350f,
+    #78350f 10px,
+    transparent 10px,
+    transparent 28px
+  );
+  opacity: 0.85;
+}
+
+.railroad-steel-2d {
+  position: absolute;
+  bottom: 23px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #64748b;
+  border-top: 1px solid #94a3b8;
+  border-bottom: 1px solid #334155;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.15);
+}
+
+/* Signs: e.g. 1레일, 1팀 */
+.rail-number-sign {
+  font-family: var(--font-game);
+  color: white;
+  border: 3px solid #1e293b;
+  border-radius: 12px;
+  box-shadow: 0 4px 0 #1e293b;
+  text-shadow: -1px -1px 0 #1e293b, 1px -1px 0 #1e293b, -1px 1px 0 #1e293b, 1px 1px 0 #1e293b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.team-badge-sign {
+  font-family: var(--font-game);
+  color: white;
+  border: 2px solid #1e293b;
+  border-radius: 8px;
+  box-shadow: 0 3px 0 #1e293b;
+}
+
+/* 2D SVGs Train Containers */
+.game-train-wrapper {
+  position: absolute;
+  bottom: 12px; /* Set train alignment directly on rail */
+  height: 52px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  transition: left 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: left;
+  z-index: 10;
+}
+
+/* Steam Smoke Bubble Keyframes */
+@keyframes smoke-float {
   0% {
-    transform: translate(0, 0) scale(0.6);
-    opacity: 0.8;
+    transform: translate(0, 0) scale(0.4);
+    opacity: 0.9;
   }
   50% {
-    transform: translate(-15px, -8px) scale(1.2);
-    opacity: 0.4;
+    transform: translate(-12px, -20px) scale(0.9);
+    opacity: 0.6;
   }
   100% {
-    transform: translate(-30px, -15px) scale(1.8);
+    transform: translate(-28px, -45px) scale(1.4);
     opacity: 0;
   }
 }
 
-@keyframes vibration {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-2px); }
-}
-
-@keyframes scanline {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(100%); }
-}
-
-/* Common Classes */
-.digital-font {
-  font-family: var(--font-mono);
-}
-
-.display-font {
-  font-family: var(--font-display);
-}
-
-/* Industrial Cyberspace Card */
-.cyber-card {
-  background: linear-gradient(135deg, #0b1329 0%, #080f20 100%);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
-}
-
-.cyber-card::before {
-  content: '';
+.smoke-cloud-2d {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--border-glow), transparent);
-  transform: translateX(-100%);
-  transition: transform 0.5s ease;
-}
-
-.cyber-card:hover::before {
-  transform: translateX(100%);
-}
-
-.cyber-badge {
-  display: inline-block;
-  padding: 4px 12px;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  text-transform: uppercase;
-  border-radius: 4px;
-  letter-spacing: 1px;
-}
-
-/* Locomotive Tracks & Racing Rails UI */
-.railroad-track {
-  position: relative;
-  height: 90px;
-  width: 100%;
-  background: #0f172a;
-  border-bottom: 2px solid #1e293b;
-  display: flex;
-  align-items: center;
-  overflow: visible; /* Allow train glow to overflow */
-}
-
-/* The actual steel rail lines */
-.rail-steel {
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 14px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  pointer-events: none;
-}
-
-.rail-steel::before,
-.rail-steel::after {
-  content: '';
-  height: 3px;
-  background: linear-gradient(90deg, #475569, #94a3b8, #475569);
-  width: 100%;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.5);
-}
-
-/* Railroad ties (wooden sleep structures) */
-.rail-ties {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: repeating-linear-gradient(
-    90deg,
-    transparent,
-    transparent 28px,
-    #1e293b 28px,
-    #1e293b 34px
-  );
-  opacity: 0.45;
-  pointer-events: none;
-}
-
-/* Neon Glow Trains */
-.train-wrapper {
-  position: absolute;
-  bottom: 15px; /* Alignment on track */
-  height: 60px;
-  width: 70px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  /* Super smooth acceleration & movement */
-  transition: left 1.2s cubic-bezier(0.25, 0.8, 0.25, 1);
-  will-change: left;
-  z-index: 10;
-  cursor: pointer;
-}
-
-.train-locomotive {
-  width: 60px;
-  height: 44px;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px 16px 4px 8px;
-  font-size: 28px;
-  animation: vibration 0.25s infinite linear;
-  box-shadow: var(--team-glow);
-}
-
-/* Custom speed particle smoke */
-.smoke-emitter {
-  position: absolute;
-  left: -12px;
-  top: 6px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.smoke-particle {
-  width: 8px;
-  height: 8px;
+  background: #ffffff;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.4);
-  animation: smoke-puff 0.8s infinite ease-out;
-}
-
-.smoke-particle:nth-child(2) {
-  animation-delay: 0.25s;
-  background: rgba(255, 255, 255, 0.25);
-}
-
-.smoke-particle:nth-child(3) {
-  animation-delay: 0.5s;
-  background: rgba(255, 255, 255, 0.15);
-}
-
-/* Glowing Neon Borders */
-.border-neon-1 { border-color: var(--team1-color); box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
-.border-neon-2 { border-color: var(--team2-color); box-shadow: 0 0 10px rgba(59, 130, 246, 0.2); }
-.border-neon-3 { border-color: var(--team3-color); box-shadow: 0 0 10px rgba(234, 179, 8, 0.2); }
-.border-neon-4 { border-color: var(--team4-color); box-shadow: 0 0 10px rgba(16, 185, 129, 0.2); }
-.border-neon-5 { border-color: var(--team5-color); box-shadow: 0 0 10px rgba(168, 85, 247, 0.2); }
-
-.bg-neon-1 { background-color: var(--team1-color); box-shadow: var(--team1-glow); }
-.bg-neon-2 { background-color: var(--team2-color); box-shadow: var(--team2-glow); }
-.bg-neon-3 { background-color: var(--team3-color); box-shadow: var(--team3-glow); }
-.bg-neon-4 { background-color: var(--team4-color); box-shadow: var(--team4-glow); }
-.bg-neon-5 { background-color: var(--team5-color); box-shadow: var(--team5-glow); }
-
-.glow-text-1 { text-shadow: 0 0 8px var(--team1-color); }
-.glow-text-2 { text-shadow: 0 0 8px var(--team2-color); }
-.glow-text-3 { text-shadow: 0 0 8px var(--team3-color); }
-.glow-text-4 { text-shadow: 0 0 8px var(--team4-color); }
-.glow-text-5 { text-shadow: 0 0 8px var(--team5-color); }
-
-/* CRT / Cyber Electrics screen overlay effect */
-.crt-screen {
-  position: relative;
-  overflow: hidden;
-}
-
-.crt-screen::after {
-  content: " ";
-  display: block;
-  position: absolute;
-  top: 0; left: 0; bottom: 0; right: 0;
-  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-  z-index: 99;
-  background-size: 100% 3px, 6px 100%;
+  width: 14px;
+  height: 14px;
+  box-shadow: inset -1px -1px 3px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.1);
+  animation: smoke-float 1s infinite ease-out;
   pointer-events: none;
 }
 
-.crt-scanline {
+/* Speed lines backing the train when accelerating */
+@keyframes speed-line-burst {
+  0% {
+    width: 0px;
+    opacity: 0;
+  }
+  30% {
+    width: 60px;
+    opacity: 0.8;
+  }
+  100% {
+    width: 90px;
+    opacity: 0;
+  }
+}
+
+.speed-booster-lines {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 10px;
-  background: rgba(59, 130, 246, 0.05);
-  animation: scanline 6s infinite linear;
+  left: -90px;
+  top: 15px;
+  height: 25px;
   pointer-events: none;
-  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.speed-booster-lines.active {
+  opacity: 1;
+}
+
+.speed-line-element {
+  height: 3px;
+  border-radius: 2px;
+  animation: speed-line-burst 0.5s infinite linear;
+}
+
+/* Playful Pop Notification Feed (뿅! 애니메이션) */
+@keyframes pop-entry {
+  0% { transform: scale(0.6) translateY(50px); opacity: 0; }
+  50% { transform: scale(1.1) translateY(-10px); }
+  75% { transform: scale(0.95) translateY(2px); }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+@keyframes pop-exit {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(0.8) translateY(-20px); opacity: 0; }
+}
+
+.pop-toast-card {
+  animation: pop-entry 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  background: white;
+  border: 4px solid #1e293b;
+  border-radius: 16px;
+  box-shadow: 0 6px 0 #1e293b;
+}
+
+.pop-toast-card.exiting {
+  animation: pop-exit 0.3s ease-in forwards;
+}
+
+/* Wheel Rotation CSS for 2D feel */
+@keyframes wheel-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(-360deg); }
+}
+
+.spinning-wheel {
+  animation: wheel-spin 0.6s infinite linear;
+  transform-origin: center;
+}
+.spinning-wheel-fast {
+  animation: wheel-spin 0.3s infinite linear;
+  transform-origin: center;
 }
