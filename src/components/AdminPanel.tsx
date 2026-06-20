@@ -16,6 +16,7 @@ import type { FirebaseConfigData } from "../types";
 export const AdminPanel: React.FC = () => {
   const {
     submissions,
+    teamScores,
     targetScore,
     isFirebaseConnected,
     updateTargetScore,
@@ -353,6 +354,89 @@ export const AdminPanel: React.FC = () => {
 
       <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
         
+        {/* Card: Team Total Scores */}
+        <section className="game-card" style={{ 
+          padding: "16px", 
+          background: "white", 
+          borderWidth: "3px" 
+        }}>
+          <h3 style={{ 
+            margin: "0 0 12px 0", 
+            fontSize: "0.95rem", 
+            fontFamily: "var(--font-game)", 
+            borderBottom: "2px dashed #e2e8f0", 
+            paddingBottom: "6px",
+            display: "flex",
+            alignItems: "center",
+            gap: "6px"
+          }}>
+            📊 팀별 현재 총 점수
+          </h3>
+          <div style={{ 
+            display: "grid", 
+            gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))", 
+            gap: "10px" 
+          }}>
+            {teamScores.map((team) => (
+              <div 
+                key={team.teamId} 
+                style={{
+                  background: "#f8fafc",
+                  border: "2px solid #1e293b",
+                  borderRadius: "12px",
+                  padding: "12px 8px",
+                  textAlign: "center",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "4px",
+                  boxShadow: "0 4px 0 #1e293b"
+                }}
+              >
+                <div style={{ 
+                  display: "flex", 
+                  alignItems: "center", 
+                  gap: "4px",
+                  marginBottom: "2px"
+                }}>
+                  <span style={{ fontSize: "1.1rem" }}>{team.trainIcon}</span>
+                  <span style={{ 
+                    background: getTeamBadgeColor(team.teamId), 
+                    color: "white", 
+                    padding: "2px 6px", 
+                    borderRadius: "6px",
+                    fontSize: "0.75rem",
+                    fontWeight: "bold",
+                    fontFamily: "var(--font-game)"
+                  }}>
+                    {team.teamId}팀
+                  </span>
+                </div>
+                <div style={{ 
+                  fontSize: "0.7rem", 
+                  color: "#64748b", 
+                  fontWeight: "800",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  maxWidth: "100%"
+                }}>
+                  {team.teamName.includes("(") ? team.teamName.split("(")[1].replace(")", "") : team.teamName}
+                </div>
+                <div className="digital-font" style={{ 
+                  fontSize: "1.4rem", 
+                  fontWeight: "900", 
+                  color: getTeamBadgeColor(team.teamId),
+                  marginTop: "2px"
+                }}>
+                  {team.score}점
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
         {/* ROW 1: Target Score & Manual Adjustment */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "1.5rem" }} className="admin-grid-cols">
           
