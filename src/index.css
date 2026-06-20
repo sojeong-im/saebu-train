@@ -400,11 +400,9 @@ body {
 
 .spinning-wheel {
   animation: wheel-spin 0.6s infinite linear;
-  transform-origin: center;
 }
 .spinning-wheel-fast {
   animation: wheel-spin 0.3s infinite linear;
-  transform-origin: center;
 }
 
 /* ==========================================================================

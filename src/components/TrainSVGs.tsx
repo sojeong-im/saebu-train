@@ -44,12 +44,24 @@ export const BlueClassicTrain: React.FC<TrainProps> = ({ isMoving }) => {
       <line x1="38" y1="44" x2="60" y2="38" stroke="#cbd5e1" strokeWidth="2" />
 
       {/* Wheels (바퀴들) */}
-      <circle className={wheelClass} cx="18" cy="44" r="7" fill="#1e293b" stroke="#fff" strokeWidth="2" />
-      <circle className={wheelClass} cx="18" cy="44" r="3" fill="#cbd5e1" />
-      <circle className={wheelClass} cx="38" cy="44" r="7" fill="#1e293b" stroke="#fff" strokeWidth="2" />
-      <circle className={wheelClass} cx="38" cy="44" r="3" fill="#cbd5e1" />
-      <circle className={wheelClass} cx="58" cy="44" r="7" fill="#1e293b" stroke="#fff" strokeWidth="2" />
-      <circle className={wheelClass} cx="58" cy="44" r="3" fill="#cbd5e1" />
+      <g className={wheelClass} style={{ transformOrigin: "18px 44px" }}>
+        <circle cx="18" cy="44" r="7" fill="#1e293b" stroke="#fff" strokeWidth="2" />
+        <circle cx="18" cy="44" r="3" fill="#cbd5e1" />
+        <line x1="18" y1="37" x2="18" y2="51" stroke="#fff" strokeWidth="1.2" />
+        <line x1="11" y1="44" x2="25" y2="44" stroke="#fff" strokeWidth="1.2" />
+      </g>
+      <g className={wheelClass} style={{ transformOrigin: "38px 44px" }}>
+        <circle cx="38" cy="44" r="7" fill="#1e293b" stroke="#fff" strokeWidth="2" />
+        <circle cx="38" cy="44" r="3" fill="#cbd5e1" />
+        <line x1="38" y1="37" x2="38" y2="51" stroke="#fff" strokeWidth="1.2" />
+        <line x1="31" y1="44" x2="45" y2="44" stroke="#fff" strokeWidth="1.2" />
+      </g>
+      <g className={wheelClass} style={{ transformOrigin: "58px 44px" }}>
+        <circle cx="58" cy="44" r="7" fill="#1e293b" stroke="#fff" strokeWidth="2" />
+        <circle cx="58" cy="44" r="3" fill="#cbd5e1" />
+        <line x1="58" y1="37" x2="58" y2="51" stroke="#fff" strokeWidth="1.2" />
+        <line x1="51" y1="44" x2="65" y2="44" stroke="#fff" strokeWidth="1.2" />
+      </g>
 
       {/* Gradients */}
       <defs>
@@ -93,10 +105,26 @@ export const RedBulletTrain: React.FC<TrainProps> = ({ isMoving }) => {
       <path d="M4 40H72V44H4V40Z" fill="#1e293b" />
 
       {/* Wheels (바퀴들 - 날렵하게 가려짐) */}
-      <circle className={wheelClass} cx="16" cy="44" r="5" fill="#475569" stroke="#fff" strokeWidth="1.5" />
-      <circle className={wheelClass} cx="30" cy="44" r="5" fill="#475569" stroke="#fff" strokeWidth="1.5" />
-      <circle className={wheelClass} cx="44" cy="44" r="5" fill="#475569" stroke="#fff" strokeWidth="1.5" />
-      <circle className={wheelClass} cx="58" cy="44" r="5" fill="#475569" stroke="#fff" strokeWidth="1.5" />
+      <g className={wheelClass} style={{ transformOrigin: "16px 44px" }}>
+        <circle cx="16" cy="44" r="5" fill="#475569" stroke="#fff" strokeWidth="1.5" />
+        <line x1="16" y1="39" x2="16" y2="49" stroke="#fff" strokeWidth="1" />
+        <line x1="11" y1="44" x2="21" y2="44" stroke="#fff" strokeWidth="1" />
+      </g>
+      <g className={wheelClass} style={{ transformOrigin: "30px 44px" }}>
+        <circle cx="30" cy="44" r="5" fill="#475569" stroke="#fff" strokeWidth="1.5" />
+        <line x1="30" y1="39" x2="30" y2="49" stroke="#fff" strokeWidth="1" />
+        <line x1="25" y1="44" x2="35" y2="44" stroke="#fff" strokeWidth="1" />
+      </g>
+      <g className={wheelClass} style={{ transformOrigin: "44px 44px" }}>
+        <circle cx="44" cy="44" r="5" fill="#475569" stroke="#fff" strokeWidth="1.5" />
+        <line x1="44" y1="39" x2="44" y2="49" stroke="#fff" strokeWidth="1" />
+        <line x1="39" y1="44" x2="49" y2="44" stroke="#fff" strokeWidth="1" />
+      </g>
+      <g className={wheelClass} style={{ transformOrigin: "58px 44px" }}>
+        <circle cx="58" cy="44" r="5" fill="#475569" stroke="#fff" strokeWidth="1.5" />
+        <line x1="58" y1="39" x2="58" y2="49" stroke="#fff" strokeWidth="1" />
+        <line x1="53" y1="44" x2="63" y2="44" stroke="#fff" strokeWidth="1" />
+      </g>
     </svg>
   );
 };
@@ -129,14 +157,30 @@ export const GreenDieselTrain: React.FC<TrainProps> = ({ isMoving }) => {
       <rect x="16" y="6" width="6" height="5" fill="#1e293b" stroke="#0f172a" strokeWidth="1.5" />
 
       {/* Wheels */}
-      <circle className={wheelClass} cx="18" cy="43" r="6" fill="#1e293b" stroke="#fff" strokeWidth="2" />
-      <circle className={wheelClass} cx="18" cy="43" r="2.5" fill="#94a3b8" />
-      <circle className={wheelClass} cx="34" cy="43" r="6" fill="#1e293b" stroke="#fff" strokeWidth="2" />
-      <circle className={wheelClass} cx="34" cy="43" r="2.5" fill="#94a3b8" />
-      <circle className={wheelClass} cx="50" cy="43" r="6" fill="#1e293b" stroke="#fff" strokeWidth="2" />
-      <circle className={wheelClass} cx="50" cy="43" r="2.5" fill="#94a3b8" />
-      <circle className={wheelClass} cx="66" cy="43" r="6" fill="#1e293b" stroke="#fff" strokeWidth="2" />
-      <circle className={wheelClass} cx="66" cy="43" r="2.5" fill="#94a3b8" />
+      <g className={wheelClass} style={{ transformOrigin: "18px 43px" }}>
+        <circle cx="18" cy="43" r="6" fill="#1e293b" stroke="#fff" strokeWidth="2" />
+        <circle cx="18" cy="43" r="2.5" fill="#94a3b8" />
+        <line x1="18" y1="37" x2="18" y2="49" stroke="#fff" strokeWidth="1.2" />
+        <line x1="12" y1="43" x2="24" y2="43" stroke="#fff" strokeWidth="1.2" />
+      </g>
+      <g className={wheelClass} style={{ transformOrigin: "34px 43px" }}>
+        <circle cx="34" cy="43" r="6" fill="#1e293b" stroke="#fff" strokeWidth="2" />
+        <circle cx="34" cy="43" r="2.5" fill="#94a3b8" />
+        <line x1="34" y1="37" x2="34" y2="49" stroke="#fff" strokeWidth="1.2" />
+        <line x1="28" y1="43" x2="40" y2="43" stroke="#fff" strokeWidth="1.2" />
+      </g>
+      <g className={wheelClass} style={{ transformOrigin: "50px 43px" }}>
+        <circle cx="50" cy="43" r="6" fill="#1e293b" stroke="#fff" strokeWidth="2" />
+        <circle cx="50" cy="43" r="2.5" fill="#94a3b8" />
+        <line x1="50" y1="37" x2="50" y2="49" stroke="#fff" strokeWidth="1.2" />
+        <line x1="44" y1="43" x2="56" y2="43" stroke="#fff" strokeWidth="1.2" />
+      </g>
+      <g className={wheelClass} style={{ transformOrigin: "66px 43px" }}>
+        <circle cx="66" cy="43" r="6" fill="#1e293b" stroke="#fff" strokeWidth="2" />
+        <circle cx="66" cy="43" r="2.5" fill="#94a3b8" />
+        <line x1="66" y1="37" x2="66" y2="49" stroke="#fff" strokeWidth="1.2" />
+        <line x1="60" y1="43" x2="72" y2="43" stroke="#fff" strokeWidth="1.2" />
+      </g>
     </svg>
   );
 };
@@ -170,9 +214,21 @@ export const PurpleFuturisticTrain: React.FC<TrainProps> = ({ isMoving }) => {
       <path d="M4 38H72V43H4V38Z" fill="#1e293b" />
 
       {/* Wheels */}
-      <circle className={wheelClass} cx="20" cy="43" r="4.5" fill="#334155" stroke="#a78bfa" strokeWidth="1.5" />
-      <circle className={wheelClass} cx="36" cy="43" r="4.5" fill="#334155" stroke="#a78bfa" strokeWidth="1.5" />
-      <circle className={wheelClass} cx="52" cy="43" r="4.5" fill="#334155" stroke="#a78bfa" strokeWidth="1.5" />
+      <g className={wheelClass} style={{ transformOrigin: "20px 43px" }}>
+        <circle cx="20" cy="43" r="4.5" fill="#334155" stroke="#a78bfa" strokeWidth="1.5" />
+        <line x1="20" y1="38.5" x2="20" y2="47.5" stroke="#a78bfa" strokeWidth="1" />
+        <line x1="15.5" y1="43" x2="24.5" y2="43" stroke="#a78bfa" strokeWidth="1" />
+      </g>
+      <g className={wheelClass} style={{ transformOrigin: "36px 43px" }}>
+        <circle cx="36" cy="43" r="4.5" fill="#334155" stroke="#a78bfa" strokeWidth="1.5" />
+        <line x1="36" y1="38.5" x2="36" y2="47.5" stroke="#a78bfa" strokeWidth="1" />
+        <line x1="31.5" y1="43" x2="40.5" y2="43" stroke="#a78bfa" strokeWidth="1" />
+      </g>
+      <g className={wheelClass} style={{ transformOrigin: "52px 43px" }}>
+        <circle cx="52" cy="43" r="4.5" fill="#334155" stroke="#a78bfa" strokeWidth="1.5" />
+        <line x1="52" y1="38.5" x2="52" y2="47.5" stroke="#a78bfa" strokeWidth="1" />
+        <line x1="47.5" y1="43" x2="56.5" y2="43" stroke="#a78bfa" strokeWidth="1" />
+      </g>
     </svg>
   );
 };
@@ -203,14 +259,30 @@ export const YellowMiniTrain: React.FC<TrainProps> = ({ isMoving }) => {
       <path d="M44 26L45 28.5L47.5 29L45.5 31L46 33.5L44 32.2L42 33.5L42.5 31L40.5 29L43 28.5L44 26Z" fill="#ffffff" stroke="#cbd5e1" strokeWidth="0.8" />
 
       {/* Small Wheels */}
-      <circle className={wheelClass} cx="16" cy="42" r="6" fill="#475569" stroke="#fff" strokeWidth="2" />
-      <circle className={wheelClass} cx="16" cy="42" r="2.5" fill="#f59e0b" />
-      <circle className={wheelClass} cx="32" cy="42" r="6" fill="#475569" stroke="#fff" strokeWidth="2" />
-      <circle className={wheelClass} cx="32" cy="42" r="2.5" fill="#f59e0b" />
-      <circle className={wheelClass} cx="48" cy="42" r="6" fill="#475569" stroke="#fff" strokeWidth="2" />
-      <circle className={wheelClass} cx="48" cy="42" r="2.5" fill="#f59e0b" />
-      <circle className={wheelClass} cx="60" cy="42" r="6" fill="#475569" stroke="#fff" strokeWidth="2" />
-      <circle className={wheelClass} cx="60" cy="42" r="2.5" fill="#f59e0b" />
+      <g className={wheelClass} style={{ transformOrigin: "16px 42px" }}>
+        <circle cx="16" cy="42" r="6" fill="#475569" stroke="#fff" strokeWidth="2" />
+        <circle cx="16" cy="42" r="2.5" fill="#f59e0b" />
+        <line x1="16" y1="36" x2="16" y2="48" stroke="#fff" strokeWidth="1.2" />
+        <line x1="10" y1="42" x2="22" y2="42" stroke="#fff" strokeWidth="1.2" />
+      </g>
+      <g className={wheelClass} style={{ transformOrigin: "32px 42px" }}>
+        <circle cx="32" cy="42" r="6" fill="#475569" stroke="#fff" strokeWidth="2" />
+        <circle cx="32" cy="42" r="2.5" fill="#f59e0b" />
+        <line x1="32" y1="36" x2="32" y2="48" stroke="#fff" strokeWidth="1.2" />
+        <line x1="26" y1="42" x2="38" y2="42" stroke="#fff" strokeWidth="1.2" />
+      </g>
+      <g className={wheelClass} style={{ transformOrigin: "48px 42px" }}>
+        <circle cx="48" cy="42" r="6" fill="#475569" stroke="#fff" strokeWidth="2" />
+        <circle cx="48" cy="42" r="2.5" fill="#f59e0b" />
+        <line x1="48" y1="36" x2="48" y2="48" stroke="#fff" strokeWidth="1.2" />
+        <line x1="42" y1="42" x2="54" y2="42" stroke="#fff" strokeWidth="1.2" />
+      </g>
+      <g className={wheelClass} style={{ transformOrigin: "60px 42px" }}>
+        <circle cx="60" cy="42" r="6" fill="#475569" stroke="#fff" strokeWidth="2" />
+        <circle cx="60" cy="42" r="2.5" fill="#f59e0b" />
+        <line x1="60" y1="36" x2="60" y2="48" stroke="#fff" strokeWidth="1.2" />
+        <line x1="54" y1="42" x2="66" y2="42" stroke="#fff" strokeWidth="1.2" />
+      </g>
     </svg>
   );
 };
